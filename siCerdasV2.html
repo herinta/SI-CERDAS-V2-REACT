@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiCerdas - Sistem Cerdas Informasi Kesehatan</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Custom styles for better look and feel */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-link.active {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Gemini AI Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay:not(.hidden) .modal-content {
+            transform: scale(1);
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #6b7280;
+        }
+        /* Loading Spinner */
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4f46e5;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Chatbot styles */
+        .chat-bubble {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+        }
+        .chat-bubble-user {
+            background-color: #4f46e5;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+            align-self: flex-end;
+        }
+        .chat-bubble-ai {
+            background-color: #e5e7eb;
+            color: #1f2937;
+            border-bottom-left-radius: 0.25rem;
+            align-self: flex-start;
+        }
+        /* Animation styles */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Card hover animation */
+        .menu-card .card-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+        .menu-card:hover .card-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+        .menu-card .arrow-icon {
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0;
+        }
+        .menu-card:hover .arrow-icon {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <!-- =================================================================
+    LOGIN & REGISTER PAGE
+    ================================================================== -->
+    <div id="login-page" class="flex items-center justify-center min-h-screen bg-indigo-50 p-4">
+        <div class="relative flex flex-col w-full max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl md:flex-row">
+            <!-- Left side with information -->
+            <div class="relative p-8 md:p-12 md:w-1/2 bg-indigo-600 text-white rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-heart-pulse text-4xl"></i>
+                        <h1 class="text-3xl font-bold">SiCerdas</h1>
+                    </div>
+                    <p class="mt-4 text-indigo-200">
+                        Program inovasi digital untuk meningkatkan akses dan penyebaran informasi kesehatan secara cepat, tepat, dan berkelanjutan.
+                    </p>
+                    <div class="mt-8 space-y-6 border-t border-indigo-500 pt-6">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-indigo-500 text-white p-3 rounded-full flex-shrink-0">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Edukasi Efisien</h3>
+                                <p class="text-sm text-indigo-200">Mendukung penyampaian edukasi kesehatan kepada masyarakat.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="bg-indigo-500 text-white p-3 rounded-full flex-shrink-0">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Data Terpusat</h3>
+                                <p class="text-sm text-indigo-200">Menyediakan data kesehatan warga berbasis RT/RW untuk perencanaan.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="bg-indigo-500 text-white p-3 rounded-full flex-shrink-0">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Kapasitas Kader</h3>
+                                <p class="text-sm text-indigo-200">Meningkatkan kapasitas kader dalam pengelolaan data digital.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Background decoration -->
+                <div class="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-indigo-500 rounded-full opacity-30"></div>
+                <div class="absolute bottom-0 left-0 -mb-12 -ml-12 w-32 h-32 bg-indigo-500 rounded-full opacity-30"></div>
+            </div>
+
+            <!-- Right side (Login/Register Forms) -->
+            <div class="w-full p-8 md:p-12">
+                <div id="login-form-container" class="relative">
+                    <div id="login-form" class="transition-all duration-500">
+                        <h2 class="mb-3 text-3xl font-bold text-gray-800">Login</h2>
+                        <p class="mb-8 text-sm text-gray-600">Selamat datang kembali! Silakan masuk ke akun Anda.</p>
+                        <form onsubmit="event.preventDefault(); login()">
+                            <div class="py-3">
+                                <label for="email" class="mb-2 text-sm font-medium text-gray-700">Alamat Email</label>
+                                <input type="email" class="w-full p-3 border border-gray-300 rounded-lg placeholder:font-light placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" name="email" id="email" required>
+                            </div>
+                            <div class="py-3">
+                                <label for="password" class="mb-2 text-sm font-medium text-gray-700">Password</label>
+                                <input type="password" name="password" id="password" class="w-full p-3 border border-gray-300 rounded-lg placeholder:font-light placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <div id="login-error" class="text-red-500 text-sm mt-2 text-center h-5"></div>
+                            <button type="submit" class="w-full mt-4 bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                                Login
+                            </button>
+                        </form>
+                        <div class="mt-8 text-center text-gray-500">
+                            Belum punya akun?
+                            <a href="#" onclick="toggleAuthForms()" class="font-semibold text-indigo-600 hover:underline">Daftar di sini</a>
+                        </div>
+                    </div>
+
+                    <div id="register-form" class="hidden absolute top-0 left-0 w-full transition-all duration-500 opacity-0">
+                        <h2 class="mb-3 text-3xl font-bold text-gray-800">Daftar Akun Baru</h2>
+                        <p class="mb-8 text-sm text-gray-600">Buat akun untuk mulai menggunakan SiCerdas.</p>
+                        <form onsubmit="event.preventDefault(); register();">
+                            <div class="py-3">
+                                <label for="reg-name" class="mb-2 text-sm font-medium text-gray-700">Nama Lengkap</label>
+                                <input type="text" id="reg-name" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                             <div class="py-3">
+                                <label for="reg-email" class="mb-2 text-sm font-medium text-gray-700">Alamat Email</label>
+                                <input type="email" id="reg-email" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <div class="py-3">
+                                <label for="reg-password" class="mb-2 text-sm font-medium text-gray-700">Password</label>
+                                <input type="password" id="reg-password" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <button type="submit" class="w-full mt-4 bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                                Daftar
+                            </button>
+                        </form>
+                        <div class="mt-8 text-center text-gray-500">
+                            Sudah punya akun?
+                            <a href="#" onclick="toggleAuthForms()" class="font-semibold text-indigo-600 hover:underline">Login di sini</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================
+    MAIN DASHBOARD APPLICATION (Initially Hidden)
+    ================================================================== -->
+    <div id="dashboard-app" class="hidden">
+        <div class="relative min-h-screen lg:flex">
+            <!-- Mobile overlay -->
+            <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden lg:hidden"></div>
+
+            <!-- Sidebar -->
+            <aside id="sidebar" class="fixed inset-y-0 left-0 bg-slate-800 text-slate-300 w-64 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-30 flex flex-col">
+                <!-- Sidebar Header -->
+                <div class="flex items-center justify-center h-20 border-b border-slate-700 flex-shrink-0">
+                    <i class="fas fa-heart-pulse text-3xl text-indigo-400"></i>
+                    <h1 class="text-2xl font-bold ml-3 text-white">SiCerdas</h1>
+                </div>
+                <!-- Navigation Links -->
+                <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                    <a href="#" onclick="showPage('page-menu-utama')" data-page="page-menu-utama" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-home w-6 text-center"></i><span class="ml-4">Menu Utama</span></a>
+                    <a href="#" onclick="showPage('page-dashboard')" data-page="page-dashboard" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-chart-pie w-6 text-center"></i><span class="ml-4">Dashboard</span></a>
+                    <p class="px-4 pt-4 pb-2 text-xs font-semibold text-slate-500 uppercase">Input Data</p>
+                    <a href="#" onclick="showPage('page-sigita')" data-page="page-sigita" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-baby w-6 text-center"></i><span class="ml-4">Data Balita (SiGita)</span></a>
+                    <a href="#" onclick="showPage('page-sigirema')" data-page="page-sigirema" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-child-reaching w-6 text-center"></i><span class="ml-4">Data Remaja (SiGirema)</span></a>
+                    <a href="#" onclick="showPage('page-sigilansa')" data-page="page-sigilansa" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-person-cane w-6 text-center"></i><span class="ml-4">Data Lansia (SiGilansa)</span></a>
+                    <a href="#" onclick="showPage('page-saraga')" data-page="page-saraga" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-users w-6 text-center"></i><span class="ml-4">Data Warga (Saraga)</span></a>
+                    <p class="px-4 pt-4 pb-2 text-xs font-semibold text-slate-500 uppercase">Lainnya</p>
+                    <a href="#" onclick="showPage('page-laporan')" data-page="page-laporan" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-file-alt w-6 text-center"></i><span class="ml-4">Laporan</span></a>
+                    <a href="#" onclick="showPage('page-pusat-informasi')" data-page="page-pusat-informasi" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-comments w-6 text-center"></i><span class="ml-4">Tanya AI</span></a>
+                    <a href="#" onclick="showPage('page-pengumuman')" data-page="page-pengumuman" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-bullhorn w-6 text-center"></i><span class="ml-4">Buat Pengumuman</span></a>
+                    <a href="#" onclick="showPage('page-profil')" data-page="page-profil" class="sidebar-link flex items-center px-4 py-2.5 rounded-lg transition duration-200 hover:bg-slate-700"><i class="fas fa-user-cog w-6 text-center"></i><span class="ml-4">Profil Admin</span></a>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <div class="flex-1 flex flex-col lg:ml-64">
+                <!-- Top Header -->
+                <header class="flex items-center justify-between h-20 px-4 sm:px-6 bg-white shadow-md flex-shrink-0">
+                    <button id="sidebar-toggle" class="text-gray-600 focus:outline-none lg:hidden">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                    <div id="page-title-header" class="text-xl sm:text-2xl font-semibold text-gray-800 truncate">Menu Utama</div>
+                    <div class="relative">
+                        <button id="user-menu-button" class="flex items-center focus:outline-none">
+                            <img id="header-profile-pic" class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/E2E8F0/4A5568?text=A" alt="Admin">
+                            <span id="header-profile-name" class="ml-3 hidden md:inline">Admin</span>
+                            <i class="fas fa-chevron-down ml-2 text-sm hidden md:inline"></i>
+                        </button>
+                        <div id="user-menu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl hidden z-10">
+                            <a href="#" onclick="showPage('page-profil')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-500 hover:text-white">Profil</a>
+                            <a href="#" onclick="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-500 hover:text-white">Logout</a>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Content Area -->
+                <main class="flex-1 p-4 sm:p-6 overflow-y-auto">
+                    <!-- ALL PAGES ARE HERE -->
+                    <div id="page-menu-utama" class="content-page fade-in"></div>
+                    <div id="page-dashboard" class="content-page hidden fade-in"></div>
+                    <div id="page-sigita" class="content-page hidden fade-in"></div>
+                    <div id="page-sigirema" class="content-page hidden fade-in"></div>
+                    <div id="page-sigilansa" class="content-page hidden fade-in"></div>
+                    <div id="page-saraga" class="content-page hidden fade-in"></div>
+                    <div id="page-laporan" class="content-page hidden fade-in"></div>
+                    <div id="page-pusat-informasi" class="content-page hidden fade-in"></div>
+                    <div id="page-pengumuman" class="content-page hidden fade-in"></div>
+                    <div id="page-profil" class="content-page hidden fade-in"></div>
+                </main>
+            </div>
+            
+            <!-- AI Assistant Floating Action Button -->
+            <button onclick="openAiAssistant()" class="fixed bottom-6 right-6 bg-indigo-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition-transform hover:scale-110">
+                <i class="fas fa-robot text-2xl"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Gemini AI Modal -->
+    <div id="ai-modal" class="modal-overlay hidden">
+        <div id="ai-modal-content" class="modal-content">
+            <span class="modal-close" onclick="closeAiModal()">&times;</span>
+            <h3 id="ai-modal-title" class="text-xl sm:text-2xl font-bold text-slate-800 mb-4"></h3>
+            <div id="ai-modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const pages = {
+            'page-menu-utama': {
+                title: 'Menu Utama',
+                content: `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        <div onclick="showPage('page-sigita')" class="menu-card group relative bg-white p-6 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden">
+                            <div class="relative z-10">
+                                <div class="card-icon bg-blue-100 text-blue-600 p-4 rounded-full inline-block">
+                                    <i class="fas fa-baby text-2xl"></i>
+                                </div>
+                                <div class="mt-4">
+                                    <h3 class="text-xl font-bold text-slate-800">Data Balita</h3>
+                                    <p class="text-slate-500">SiGita</p>
+                                </div>
+                                <div class="arrow-icon absolute bottom-0 right-0 p-4 text-blue-600">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-16 -right-16 w-32 h-32 bg-blue-50 rounded-full transition-transform duration-500 group-hover:scale-[8]"></div>
+                        </div>
+                         <div onclick="showPage('page-sigirema')" class="menu-card group relative bg-white p-6 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden">
+                            <div class="relative z-10">
+                                <div class="card-icon bg-green-100 text-green-600 p-4 rounded-full inline-block">
+                                    <i class="fas fa-child-reaching text-2xl"></i>
+                                </div>
+                                <div class="mt-4">
+                                    <h3 class="text-xl font-bold text-slate-800">Data Remaja</h3>
+                                    <p class="text-slate-500">SiGirema</p>
+                                </div>
+                                <div class="arrow-icon absolute bottom-0 right-0 p-4 text-green-600">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-16 -right-16 w-32 h-32 bg-green-50 rounded-full transition-transform duration-500 group-hover:scale-[8]"></div>
+                        </div>
+                         <div onclick="showPage('page-sigilansa')" class="menu-card group relative bg-white p-6 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden">
+                            <div class="relative z-10">
+                                <div class="card-icon bg-orange-100 text-orange-600 p-4 rounded-full inline-block">
+                                    <i class="fas fa-person-cane text-2xl"></i>
+                                </div>
+                                <div class="mt-4">
+                                    <h3 class="text-xl font-bold text-slate-800">Data Lansia</h3>
+                                    <p class="text-slate-500">SiGilansa</p>
+                                </div>
+                                <div class="arrow-icon absolute bottom-0 right-0 p-4 text-orange-600">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-16 -right-16 w-32 h-32 bg-orange-50 rounded-full transition-transform duration-500 group-hover:scale-[8]"></div>
+                        </div>
+                         <div onclick="showPage('page-saraga')" class="menu-card group relative bg-white p-6 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden">
+                            <div class="relative z-10">
+                                <div class="card-icon bg-purple-100 text-purple-600 p-4 rounded-full inline-block">
+                                    <i class="fas fa-users text-2xl"></i>
+                                </div>
+                                <div class="mt-4">
+                                    <h3 class="text-xl font-bold text-slate-800">Data Warga</h3>
+                                    <p class="text-slate-500">Saraga</p>
+                                </div>
+                                <div class="arrow-icon absolute bottom-0 right-0 p-4 text-purple-600">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-16 -right-16 w-32 h-32 bg-purple-50 rounded-full transition-transform duration-500 group-hover:scale-[8]"></div>
+                        </div>
+                    </div>
+                `
+            },
+            'page-dashboard': {
+                title: 'Dashboard',
+                content: `
+                    <!-- New AI Insight Card -->
+                    <div class="bg-white p-6 rounded-xl shadow-md mb-6 border-l-4 border-indigo-500">
+                         <div class="flex items-center gap-4">
+                             <div class="text-indigo-500">
+                                <i class="fas fa-lightbulb text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800">✨ Wawasan AI Harian</h3>
+                                <div id="ai-insights" class="text-sm text-slate-600 mt-1"><div class="loader" style="width:20px; height:20px; border-width: 2px; margin: 0;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+                        <!-- Card 1: Total Balita -->
+                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between">
+                            <div>
+                                <h4 class="text-slate-500 font-medium">Total Balita</h4>
+                                <p class="text-3xl font-bold text-slate-800 mt-1">125</p>
+                                <p class="text-xs text-green-500 flex items-center mt-1"><i class="fas fa-arrow-up mr-1"></i> 5% dari bulan lalu</p>
+                            </div>
+                            <div class="bg-blue-100 text-blue-600 p-4 rounded-full">
+                                <i class="fas fa-baby text-2xl"></i>
+                            </div>
+                        </div>
+                        <!-- Card 2: Total Remaja -->
+                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between">
+                            <div>
+                                <h4 class="text-slate-500 font-medium">Total Remaja</h4>
+                                <p class="text-3xl font-bold text-slate-800 mt-1">340</p>
+                                <p class="text-xs text-green-500 flex items-center mt-1"><i class="fas fa-arrow-up mr-1"></i> 2% dari bulan lalu</p>
+                            </div>
+                            <div class="bg-green-100 text-green-600 p-4 rounded-full">
+                                <i class="fas fa-child-reaching text-2xl"></i>
+                            </div>
+                        </div>
+                        <!-- Card 3: Total Lansia -->
+                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between">
+                            <div>
+                                <h4 class="text-slate-500 font-medium">Total Lansia</h4>
+                                <p class="text-3xl font-bold text-slate-800 mt-1">88</p>
+                                <p class="text-xs text-red-500 flex items-center mt-1"><i class="fas fa-arrow-down mr-1"></i> 1% dari bulan lalu</p>
+                            </div>
+                            <div class="bg-orange-100 text-orange-600 p-4 rounded-full">
+                                <i class="fas fa-person-cane text-2xl"></i>
+                            </div>
+                        </div>
+                        <!-- Card 4: Total Warga -->
+                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between">
+                            <div>
+                                <h4 class="text-slate-500 font-medium">Total Warga</h4>
+                                <p class="text-3xl font-bold text-slate-800 mt-1">1,250</p>
+                                <p class="text-xs text-green-500 flex items-center mt-1"><i class="fas fa-arrow-up mr-1"></i> 3% dari bulan lalu</p>
+                            </div>
+                            <div class="bg-purple-100 text-purple-600 p-4 rounded-full">
+                                <i class="fas fa-users text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+                        <div class="lg:col-span-3 bg-white p-4 sm:p-6 rounded-xl shadow-md">
+                            <h3 class="font-semibold text-slate-800 mb-4">Grafik Pertumbuhan Balita</h3>
+                            <div class="h-80"><canvas id="balitaChart"></canvas></div>
+                        </div>
+                        <div class="lg:col-span-2 bg-white p-4 sm:p-6 rounded-xl shadow-md">
+                            <h3 class="font-semibold text-slate-800 mb-4">Status Kesehatan Lansia</h3>
+                            <div class="h-80 flex items-center justify-center"><canvas id="lansiaChart"></canvas></div>
+                        </div>
+                    </div>
+                `,
+                onLoad: () => { initCharts(); getDashboardInsights(); }
+            },
+            'page-sigita': {
+                title: 'Formulir Data Balita (SiGita)',
+                content: `
+                    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md">
+                        <form id="form-sigita" class="space-y-8" onsubmit="event.preventDefault()">
+                            <fieldset>
+                                <legend class="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">Informasi Dasar Balita</legend>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div><label for="sigita-nama" class="block text-sm font-medium text-gray-700">Nama</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-child text-gray-400"></i></span><input type="text" id="sigita-nama" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div>
+                                    <div><label for="sigita-nik" class="block text-sm font-medium text-gray-700">NIK</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-id-card text-gray-400"></i></span><input type="text" id="sigita-nik" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div>
+                                    <div><label for="sigita-ttl" class="block text-sm font-medium text-gray-700">Tanggal Lahir</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-calendar-alt text-gray-400"></i></span><input type="date" id="sigita-ttl" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div>
+                                    <div><label for="sigita-pj" class="block text-sm font-medium text-gray-700">Penanggung Jawab</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-user-shield text-gray-400"></i></span><input type="text" id="sigita-pj" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div>
+                                    <div><label for="sigita-rt" class="block text-sm font-medium text-gray-700">RT/RW</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-map-marker-alt text-gray-400"></i></span><input type="text" id="sigita-rt" placeholder="001/002" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div>
+                                    <div><label for="sigita-usia" class="block text-sm font-medium text-gray-700">Usia (bulan)</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-baby-carriage text-gray-400"></i></span><input type="number" id="sigita-usia" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div>
+                                </div>
+                            </fieldset>
+                            
+                            <fieldset>
+                                <legend class="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">Data Pengukuran</legend>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                                    <div><label class="block text-sm font-medium text-gray-700">Berat (kg)</label><input type="number" id="sigita-bb" step="0.1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div>
+                                    <div><label class="block text-sm font-medium text-gray-700">Tinggi (cm)</label><input type="number" id="sigita-tb" step="0.1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div>
+                                    <div><label class="block text-sm font-medium text-gray-700">LILA (cm)</label><input type="number" id="sigita-lila" step="0.1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div>
+                                    <div><label class="block text-sm font-medium text-gray-700">L. Kepala (cm)</label><input type="number" id="sigita-lk" step="0.1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div>
+                                    <div><label class="block text-sm font-medium text-gray-700">L. Perut (cm)</label><input type="number" id="sigita-lp" step="0.1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend class="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">Analisis Gizi Makanan (AI)</legend>
+                                <div>
+                                    <label for="sigita-food-pic" class="block text-sm font-medium text-gray-700">Unggah Foto Makanan Balita</label>
+                                    <div class="mt-2 flex flex-col sm:flex-row items-center gap-4">
+                                        <img id="sigita-food-preview" src="https://placehold.co/100x100/e0e0e0/757575?text=Foto+Makanan" class="w-24 h-24 rounded-md object-cover flex-shrink-0">
+                                        <input type="file" id="sigita-food-pic" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" accept="image/*" onchange="previewFoodPicture(event, 'sigita-food-preview')">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <div class="flex flex-col sm:flex-row justify-end items-center pt-4 gap-4">
+                                <button type="button" onclick="getFoodNutritionAnalysis()" class="w-full sm:w-auto bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-200 flex items-center justify-center gap-2">✨ Analisis Gizi Foto</button>
+                                <button type="button" onclick="getBalitaNutritionAdvice()" class="w-full sm:w-auto bg-amber-500 text-white px-6 py-2 rounded-lg hover:bg-amber-600 transition duration-200 flex items-center justify-center gap-2">✨ Buat Saran Gizi</button>
+                                <button type="submit" class="w-full sm:w-auto bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">Simpan Data</button>
+                            </div>
+                        </form>
+                    </div>
+                `
+            },
+            'page-sigirema': {
+                title: 'Formulir Data Remaja (SiGirema)',
+                content: `<div class="bg-white p-6 sm:p-8 rounded-lg shadow-md"><form id="form-sigirema" class="space-y-8" onsubmit="event.preventDefault()"><fieldset><legend class="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">Informasi Dasar Remaja</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="sigirema-nama" class="block text-sm font-medium text-gray-700">Nama</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-user text-gray-400"></i></span><input type="text" id="sigirema-nama" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div><div><label for="sigirema-nik" class="block text-sm font-medium text-gray-700">NIK</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-id-card text-gray-400"></i></span><input type="text" id="sigirema-nik" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div><div><label for="sigirema-ttl" class="block text-sm font-medium text-gray-700">Tanggal Lahir</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-calendar-alt text-gray-400"></i></span><input type="date" id="sigirema-ttl" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div><div><label for="sigirema-usia" class="block text-sm font-medium text-gray-700">Usia (tahun)</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-birthday-cake text-gray-400"></i></span><input type="number" id="sigirema-usia" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div><div><label for="sigirema-rt" class="block text-sm font-medium text-gray-700">RT/RW</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-map-marker-alt text-gray-400"></i></span><input type="text" id="sigirema-rt" placeholder="001/002" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div></div></fieldset><fieldset><legend class="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">Data Pengukuran & Kesehatan</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="sigirema-tb" class="block text-sm font-medium text-gray-700">Tinggi Badan (cm)</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-ruler-vertical text-gray-400"></i></span><input type="number" id="sigirema-tb" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div><div><label for="sigirema-bb" class="block text-sm font-medium text-gray-700">Berat Badan (kg)</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-weight-scale text-gray-400"></i></span><input type="number" id="sigirema-bb" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div></div><div class="md:col-span-2"><label for="sigirema-anemia" class="block text-sm font-medium text-gray-700">Tanda & Gejala Anemia</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3 pt-2"><i class="fas fa-head-side-cough text-gray-400"></i></span><textarea id="sigirema-anemia" rows="3" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Contoh: 5L (Lesu, Letih, Lemah, Lelah, Lalai), pusing, mata berkunang-kunang..."></textarea></div></div></div></fieldset><div class="flex flex-col sm:flex-row justify-end items-center pt-4 gap-4"><button type="button" onclick="getRemajaAnemiaAnalysis()" class="w-full sm:w-auto bg-rose-500 text-white px-6 py-2 rounded-lg hover:bg-rose-600 transition duration-200 flex items-center justify-center gap-2">✨ Analisis Gejala</button><button type="submit" class="w-full sm:w-auto bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">Simpan Data</button></div></form></div>`
+            },
+            'page-sigilansa': {
+                title: 'Formulir Data Lansia (SiGilansa)',
+                content: `<div class="bg-white p-6 sm:p-8 rounded-lg shadow-md"><form id="form-sigilansa" class="space-y-8" onsubmit="event.preventDefault()"><fieldset><legend class="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">Informasi Pribadi</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="sigilansa-nama" class="block text-sm font-medium text-gray-700">Nama</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-user-alt text-gray-400"></i></span><input type="text" id="sigilansa-nama" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div><div><label for="sigilansa-nik" class="block text-sm font-medium text-gray-700">NIK</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-id-card text-gray-400"></i></span><input type="text" id="sigilansa-nik" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div><div><label for="sigilansa-ttl" class="block text-sm font-medium text-gray-700">Tanggal Lahir</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-calendar-alt text-gray-400"></i></span><input type="date" id="sigilansa-ttl" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div><div><label for="sigilansa-usia" class="block text-sm font-medium text-gray-700">Usia (tahun)</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-birthday-cake text-gray-400"></i></span><input type="number" id="sigilansa-usia" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div><div><label for="sigilansa-rt" class="block text-sm font-medium text-gray-700">RT/RW</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-map-marker-alt text-gray-400"></i></span><input type="text" id="sigilansa-rt" placeholder="001/002" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div></div></fieldset><fieldset><legend class="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">Data Pengukuran & Kesehatan</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="sigilansa-td" class="block text-sm font-medium text-gray-700">Tekanan Darah</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-heart-pulse text-gray-400"></i></span><input type="text" id="sigilansa-td" placeholder="120/80" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div><div class="md:col-span-2"><label for="sigilansa-riwayat" class="block text-sm font-medium text-gray-700">Riwayat Penyakit</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3 pt-2"><i class="fas fa-notes-medical text-gray-400"></i></span><textarea id="sigilansa-riwayat" rows="3" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></textarea></div></div></div></fieldset><fieldset><legend class="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">Hasil Lab</legend><div class="grid grid-cols-1 sm:grid-cols-3 gap-6"><div><label class="block text-sm font-medium text-gray-700">Asam Urat</label><input type="text" id="sigilansa-au" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div><div><label class="block text-sm font-medium text-gray-700">Glukosa</label><input type="text" id="sigilansa-glukosa" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div><div><label class="block text-sm font-medium text-gray-700">Kolesterol</label><input type="text" id="sigilansa-kolesterol" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div></fieldset><div class="flex flex-col sm:flex-row justify-end items-center pt-4 gap-4"><button type="button" onclick="getLansiaRecommendation()" class="w-full sm:w-auto bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition duration-200 flex items-center justify-center gap-2">✨ Buat Rekomendasi</button><button type="submit" class="w-full sm:w-auto bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">Simpan Data</button></div></form></div>`
+            },
+            'page-saraga': {
+                title: 'Formulir Data Warga (Saraga)',
+                content: `<div class="bg-white p-6 sm:p-8 rounded-lg shadow-md max-w-2xl mx-auto"><div class="mb-6"><label for="saraga-paste-box" class="block text-sm font-medium text-gray-700">Tempel Data Warga di Sini</label><textarea id="saraga-paste-box" rows="4" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Contoh: Nama: Budi Santoso, NIK: 3374..., No KK: 3374..., RT/RW: 001/005"></textarea><button id="autofill-btn" onclick="autofillSaragaForm()" class="mt-2 w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 flex items-center justify-center gap-2"> <i class="fas fa-magic-wand-sparkles"></i> ✨ Isi Otomatis dari Teks </button></div><hr class="my-6"><form id="form-saraga" class="space-y-6"><div><label for="saraga-nama" class="block text-sm font-medium text-gray-700">Nama Lengkap</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-user text-gray-400"></i></span><input type="text" id="saraga-nama" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div><div><label for="saraga-nik" class="block text-sm font-medium text-gray-700">Nomor Induk Kependudukan (NIK)</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-id-card text-gray-400"></i></span><input type="text" id="saraga-nik" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div><div><label for="saraga-kk" class="block text-sm font-medium text-gray-700">Nomor Kartu Keluarga (KK)</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-users text-gray-400"></i></span><input type="text" id="saraga-kk" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div><div><label for="saraga-rt" class="block text-sm font-medium text-gray-700">RT/RW</label><div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-map-marker-alt text-gray-400"></i></span><input type="text" id="saraga-rt" placeholder="001/002" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"></div></div><div class="flex justify-end pt-4"><button type="submit" class="w-full sm:w-auto bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">Simpan Data</button></div></form></div>`
+            },
+            'page-laporan': {
+                title: 'Laporan Data Kesehatan',
+                content: `<div class="bg-white p-6 rounded-lg shadow-md"><div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4"><div class="relative w-full sm:w-80"><input type="text" placeholder="Cari nama..." class="pl-10 pr-4 py-2 border rounded-lg w-full"><i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i></div><div class="flex flex-col sm:flex-row w-full sm:w-auto gap-2"><button onclick="getLaporanSummary()" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center justify-center gap-2"><i class="fas fa-wand-magic-sparkles"></i> ✨ Buat Ringkasan</button><button class="w-full sm:w-auto bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 flex items-center justify-center"><i class="fas fa-file-export mr-2"></i> Export</button></div></div><div class="overflow-x-auto"><table class="w-full text-left" id="laporan-table"><thead class="bg-slate-100"><tr><th class="p-3 text-sm font-semibold">Nama</th><th class="p-3 text-sm font-semibold">Kategori</th><th class="p-3 text-sm font-semibold">Tgl Periksa</th><th class="p-3 text-sm font-semibold">Status</th></tr></thead><tbody id="laporan-table-body"><tr class="border-b"><td class="p-3">Ananda Putri</td><td class="p-3">Balita</td><td class="p-3">2025-07-15</td><td class="p-3"><span class="bg-green-200 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Sehat</span></td></tr><tr class="border-b"><td class="p-3">Budi Santoso</td><td class="p-3">Lansia</td><td class="p-3">2025-07-14</td><td class="p-3"><span class="bg-yellow-200 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Perlu Perhatian</span></td></tr><tr class="border-b"><td class="p-3">Citra Lestari</td><td class="p-3">Remaja</td><td class="p-3">2025-07-12</td><td class="p-3"><span class="bg-red-200 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Anemia</span></td></tr><tr class="border-b"><td class="p-3">Dewi Anggraini</td><td class="p-3">Balita</td><td class="p-3">2025-07-11</td><td class="p-3"><span class="bg-yellow-200 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Stunting</span></td></tr><tr class="border-b"><td class="p-3">Eko Prasetyo</td><td class="p-3">Lansia</td><td class="p-3">2025-07-10</td><td class="p-3"><span class="bg-red-200 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Hipertensi</span></td></tr></tbody></table></div></div>`
+            },
+            'page-pusat-informasi': {
+                title: 'Tanya AI',
+                content: `
+                    <div class="bg-white rounded-lg shadow-md flex flex-col" style="height: 70vh;">
+                        <div class="p-4 border-b text-center">
+                            <i class="fas fa-comments text-3xl text-indigo-500"></i>
+                            <h3 class="text-xl font-bold text-slate-800 mt-2">Asisten Kesehatan AI</h3>
+                            <p class="text-sm text-slate-500">Tanyakan apa saja seputar kesehatan.</p>
+                        </div>
+                        <div id="chatbot-messages" class="flex-1 p-4 space-y-4 overflow-y-auto flex flex-col">
+                            <!-- Chat messages will appear here -->
+                             <div class="chat-bubble chat-bubble-ai">
+                                Halo! Ada yang bisa saya bantu terkait informasi kesehatan hari ini?
+                            </div>
+                        </div>
+                        <div class="p-4 border-t">
+                            <form id="chatbot-form" class="flex items-center gap-2">
+                                <input type="text" id="chatbot-input" class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ketik pertanyaan Anda...">
+                                <button type="submit" class="bg-indigo-600 text-white rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center hover:bg-indigo-700">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                `
+            },
+            'page-pengumuman': {
+                title: 'Buat Pengumuman',
+                content: `
+                    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md">
+                        <div class="text-center">
+                            <i class="fas fa-bullhorn text-4xl text-indigo-500"></i>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-3">Buat Pengumuman Kesehatan</h3>
+                            <p class="text-slate-500 mt-1">Tuliskan isu utama, dan biarkan AI membuat draf pengumuman yang siap disebar.</p>
+                        </div>
+                        <div class="mt-8 space-y-4">
+                            <div>
+                                <label for="announcement-topic" class="block text-sm font-medium text-gray-700">Isu Utama</label>
+                                <textarea id="announcement-topic" rows="3" placeholder="Contoh: Ada 2 kasus demam berdarah di RT 05. Ajak warga untuk PSN hari Minggu." class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                            </div>
+                            <div class="flex justify-end pt-2">
+                                <button onclick="generateAnnouncement()" class="w-full sm:w-auto bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200 flex items-center justify-center gap-2">
+                                    <i class="fas fa-wand-magic-sparkles"></i> Buat Teks Pengumuman
+                                </button>
+                            </div>
+                            <div id="announcement-result-container" class="hidden pt-4">
+                                <hr class="my-4">
+                                <h4 class="text-lg font-semibold text-slate-700 mb-2">Hasil Draf Pengumuman:</h4>
+                                <div id="announcement-result" class="p-4 bg-slate-50 rounded-md border text-slate-700 whitespace-pre-wrap"></div>
+                                <button onclick="copyToClipboard('announcement-result')" class="mt-2 bg-slate-200 text-slate-700 px-4 py-1 rounded-lg hover:bg-slate-300 text-sm flex items-center gap-2"><i class="fas fa-copy"></i> Salin Teks</button>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'page-profil': {
+                title: 'Profil Admin',
+                content: `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                            <div class="relative w-32 h-32 mx-auto group">
+                                <img id="profile-pic-preview" class="w-32 h-32 rounded-full object-cover mx-auto" src="https://placehold.co/150x150/E2E8F0/4A5568?text=A" alt="Admin">
+                                <label for="profile-pic-upload" class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    <i class="fas fa-camera text-2xl"></i>
+                                </label>
+                                <input type="file" id="profile-pic-upload" class="hidden" accept="image/*" onchange="previewFoodPicture(event, 'profile-pic-preview')">
+                            </div>
+                            <h3 id="profile-card-name" class="text-xl font-bold text-slate-800 mt-4">Admin Plamongansari</h3>
+                            <p id="profile-card-email" class="text-slate-500 text-sm">admin.plamongan@email.com</p>
+                            <div class="mt-4">
+                                <span id="profile-status-badge" class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                    <span class="w-2 h-2 mr-1.5 bg-green-500 rounded-full"></span>
+                                    Sehat
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md">
+                            <form class="space-y-6" onsubmit="event.preventDefault(); saveProfileChanges();">
+                                <h3 class="text-xl font-semibold text-slate-700 border-b pb-4">Informasi Pribadi</h3>
+                                <div>
+                                    <label for="profile-name" class="block text-sm font-medium text-gray-700">Nama</label>
+                                    <div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-user text-gray-400"></i></span><input type="text" id="profile-name" value="Admin Plamongansari" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div>
+                                </div>
+                                <div>
+                                    <label for="profile-email" class="block text-sm font-medium text-gray-700">Email</label>
+                                    <div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-envelope text-gray-400"></i></span><input type="email" id="profile-email" value="admin.plamongan@email.com" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div>
+                                </div>
+                                
+                                <hr>
+                                <h3 class="text-xl font-semibold text-slate-700 border-b pb-4">Update Kondisi Kesehatan</h3>
+                                <div>
+                                    <label for="profile-blood-pressure" class="block text-sm font-medium text-gray-700">Tekanan Darah</label>
+                                    <div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-heart-pulse text-gray-400"></i></span><input type="text" id="profile-blood-pressure" placeholder="Contoh: 120/80" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div>
+                                </div>
+                                <div>
+                                    <label for="profile-blood-sugar" class="block text-sm font-medium text-gray-700">Gula Darah (mg/dL)</label>
+                                    <div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-tint text-gray-400"></i></span><input type="number" id="profile-blood-sugar" placeholder="Contoh: 90" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></div>
+                                </div>
+                                 <div>
+                                    <label for="profile-complaints" class="block text-sm font-medium text-gray-700">Keluhan Saat Ini</label>
+                                    <div class="relative mt-1"><span class="absolute inset-y-0 left-0 flex items-center pl-3 pt-2"><i class="fas fa-head-side-cough text-gray-400"></i></span><textarea id="profile-complaints" rows="2" placeholder="Kosongkan jika tidak ada keluhan" class="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea></div>
+                                </div>
+                                
+                                <div class="flex flex-col sm:flex-row justify-between items-center pt-4 gap-4">
+                                    <button type="button" onclick="getHealthPlan()" class="w-full sm:w-auto bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition duration-200 flex items-center justify-center gap-2">✨ Buat Rencana Sehat</button>
+                                    <div class="flex gap-3 w-full sm:w-auto">
+                                        <button type="button" class="w-full bg-slate-200 text-slate-700 px-6 py-2 rounded-lg hover:bg-slate-300 transition duration-200">Batal</button>
+                                        <button type="submit" id="save-profile-button" class="w-full bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200">Simpan</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>`
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            // Initialize all page contents
+            for (const pageId in pages) {
+                const pageContainer = document.getElementById(pageId);
+                if (pageContainer) {
+                    pageContainer.innerHTML = `<h1>${pages[pageId].title}</h1>` + pages[pageId].content;
+                    if (pageId === 'page-menu-utama') {
+                        pageContainer.querySelector('h1').classList.add('hidden');
+                    } else {
+                         pageContainer.querySelector('h1').className = 'text-2xl sm:text-3xl font-bold text-slate-800 mb-6';
+                    }
+                }
+            }
+            
+            showPage('page-menu-utama');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            }
+
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', toggleSidebar);
+            
+            userMenuButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userMenu.classList.toggle('hidden');
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!userMenu.contains(e.target) && !userMenuButton.contains(e.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+        });
+
+        // --- AUTHENTICATION & PAGE VISIBILITY ---
+        // Simple in-memory user store for demonstration
+        let users = [
+            { name: "Admin", email: "admin@sicerdas.com", password: "password123" }
+        ];
+
+        function toggleAuthForms() {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const errorDiv = document.getElementById('login-error');
+            
+            errorDiv.classList.add('hidden'); // Hide any previous errors
+            
+            if (!loginForm.classList.contains('hidden')) {
+                loginForm.classList.add('opacity-0');
+                setTimeout(() => {
+                    loginForm.classList.add('hidden');
+                    registerForm.classList.remove('hidden');
+                    setTimeout(() => registerForm.classList.remove('opacity-0'), 50);
+                }, 300);
+            } else {
+                registerForm.classList.add('opacity-0');
+                setTimeout(() => {
+                    registerForm.classList.add('hidden');
+                    loginForm.classList.remove('hidden');
+                    setTimeout(() => loginForm.classList.remove('opacity-0'), 50);
+                }, 300);
+            }
+        }
+        
+        function login() {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const errorDiv = document.getElementById('login-error');
+
+            const foundUser = users.find(user => user.email === emailInput.value && user.password === passwordInput.value);
+
+            if (foundUser) {
+                document.getElementById('login-page').classList.add('hidden');
+                document.getElementById('dashboard-app').classList.remove('hidden');
+                
+                // Update header with logged-in user's name
+                document.getElementById('header-profile-name').textContent = foundUser.name.split(' ')[0];
+                document.getElementById('profile-card-name').textContent = foundUser.name;
+                document.getElementById('profile-card-email').textContent = foundUser.email;
+                document.getElementById('profile-name').value = foundUser.name;
+                document.getElementById('profile-email').value = foundUser.email;
+                
+                showPage('page-menu-utama');
+                errorDiv.classList.add('hidden');
+                emailInput.value = '';
+                passwordInput.value = '';
+            } else {
+                errorDiv.textContent = "Email atau password salah. Coba lagi.";
+                errorDiv.classList.remove('hidden');
+                errorDiv.classList.add('text-red-500');
+                errorDiv.classList.remove('text-green-500');
+            }
+        }
+
+        function register() {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const errorDiv = document.getElementById('login-error');
+
+            const existingUser = users.find(user => user.email === email);
+
+            if (existingUser) {
+                alert("Email sudah terdaftar. Silakan gunakan email lain.");
+                return;
+            }
+
+            // Add new user to our temporary store
+            users.push({ name, email, password });
+            console.log("Pengguna terdaftar:", users);
+
+            // Show success message and switch to login form
+            toggleAuthForms(); // Switch back to login form
+            errorDiv.textContent = "Registrasi berhasil! Silakan login.";
+            errorDiv.classList.remove('hidden', 'text-red-500');
+            errorDiv.classList.add('text-green-500');
+
+            // Hide the message after a few seconds
+            setTimeout(() => {
+                errorDiv.classList.add('hidden');
+                errorDiv.classList.remove('text-green-500');
+                errorDiv.classList.add('text-red-500'); // Reset color for login errors
+                errorDiv.textContent = "";
+            }, 3000);
+        }
+
+        function logout() { document.getElementById('dashboard-app').classList.add('hidden'); document.getElementById('login-page').classList.remove('hidden'); }
+
+        // --- SPA-LIKE NAVIGATION ---
+        function showPage(pageId) {
+            document.querySelectorAll('.content-page').forEach(page => page.classList.add('hidden'));
+            const activePage = document.getElementById(pageId);
+            if (activePage) {
+                 activePage.classList.remove('hidden');
+                 // Trigger animation
+                 activePage.classList.remove('fade-in');
+                 void activePage.offsetWidth; // Trigger reflow
+                 activePage.classList.add('fade-in');
+            }
+            
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === pageId) link.classList.add('active');
+            });
+
+            const pageTitleHeader = document.getElementById('page-title-header');
+            if (pages[pageId] && pageTitleHeader) {
+                pageTitleHeader.textContent = pages[pageId].title;
+            }
+
+            if (pages[pageId] && typeof pages[pageId].onLoad === 'function') {
+                pages[pageId].onLoad();
+            }
+            
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth < 1024 && !sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full');
+                document.getElementById('sidebar-overlay').classList.add('hidden');
+            }
+            
+            document.getElementById('user-menu').classList.add('hidden');
+
+            if (pageId === 'page-pusat-informasi') {
+                document.getElementById('chatbot-form').addEventListener('submit', sendChatMessage);
+            }
+        }
+
+        // --- CHART.JS INITIALIZATION ---
+        let balitaChartInstance, lansiaChartInstance;
+        function initCharts() {
+            if (balitaChartInstance) balitaChartInstance.destroy();
+            if (lansiaChartInstance) lansiaChartInstance.destroy();
+
+            Chart.defaults.font.family = 'Inter';
+            const balitaCtx = document.getElementById('balitaChart')?.getContext('2d');
+            if(balitaCtx) {
+                balitaChartInstance = new Chart(balitaCtx, { type: 'bar', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'], datasets: [{ label: 'Jumlah Pemeriksaan', data: [65, 59, 80, 81, 56, 55], backgroundColor: 'rgba(79, 70, 229, 0.8)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 1, borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
+            }
+            
+            const lansiaCtx = document.getElementById('lansiaChart')?.getContext('2d');
+            if(lansiaCtx) {
+                lansiaChartInstance = new Chart(lansiaCtx, { type: 'doughnut', data: { labels: ['Sehat', 'Hipertensi', 'Diabetes', 'Lainnya'], datasets: [{ label: 'Status Kesehatan', data: [50, 20, 15, 13], backgroundColor: ['#22c55e', '#f97316', '#ef4444', '#64748b'], hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false } });
+            }
+        }
+        
+        // --- PROFILE FEATURES ---
+        function previewFoodPicture(event, previewId) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const output = document.getElementById(previewId);
+                output.src = reader.result;
+                if (previewId === 'profile-pic-preview') {
+                    document.getElementById('header-profile-pic').src = reader.result;
+                }
+            };
+            if(event.target.files[0]){
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+        
+        function saveProfileChanges() {
+            // Update personal info
+            const newName = document.getElementById('profile-name').value;
+            const newEmail = document.getElementById('profile-email').value;
+            document.getElementById('profile-card-name').textContent = newName;
+            document.getElementById('profile-card-email').textContent = newEmail;
+            document.getElementById('header-profile-name').textContent = newName.split(' ')[0];
+            
+            // Determine health status from health data
+            const bloodPressure = document.getElementById('profile-blood-pressure').value;
+            const bloodSugar = parseInt(document.getElementById('profile-blood-sugar').value, 10);
+            const complaints = document.getElementById('profile-complaints').value;
+            
+            let newStatus = 'Sehat'; // Default status
+            if (complaints.trim() !== '') {
+                newStatus = 'Sakit';
+            } else if ((bloodPressure && bloodPressure.split('/')[0] > 130) || (bloodSugar && bloodSugar > 125)) {
+                newStatus = 'Kurang Sehat';
+            }
+
+            // Update the status badge
+            const statusBadge = document.getElementById('profile-status-badge');
+            const statusDot = statusBadge.querySelector('span');
+            const statusText = statusBadge.childNodes[2];
+            
+            let badgeColor, dotColor;
+            switch(newStatus) {
+                case 'Sehat': badgeColor = 'bg-green-100 text-green-800'; dotColor = 'bg-green-500'; break;
+                case 'Kurang Sehat': badgeColor = 'bg-yellow-100 text-yellow-800'; dotColor = 'bg-yellow-500'; break;
+                case 'Sakit': badgeColor = 'bg-red-100 text-red-800'; dotColor = 'bg-red-500'; break;
+                default: badgeColor = 'bg-gray-100 text-gray-800'; dotColor = 'bg-gray-500';
+            }
+            
+            statusBadge.className = `inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full ${badgeColor}`;
+            statusDot.className = `w-2 h-2 mr-1.5 rounded-full ${dotColor}`;
+            statusText.nodeValue = ` ${newStatus} `;
+
+            // Show save confirmation
+            const saveButton = document.getElementById('save-profile-button');
+            const originalHtml = saveButton.innerHTML;
+            saveButton.innerHTML = `<i class="fas fa-check mr-2"></i> Tersimpan!`;
+            saveButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+            saveButton.classList.add('bg-green-500');
+            saveButton.disabled = true;
+
+            setTimeout(() => {
+                saveButton.innerHTML = originalHtml;
+                saveButton.classList.remove('bg-green-500');
+                saveButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                saveButton.disabled = false;
+            }, 2000);
+        }
+
+        // --- GEMINI AI FEATURES ---
+        const modal = document.getElementById('ai-modal');
+        const modalTitle = document.getElementById('ai-modal-title');
+        const modalBody = document.getElementById('ai-modal-body');
+        let audioContext;
+        let currentAudioSource = null;
+
+        function showAiModal(title, content) {
+            modalTitle.innerText = title;
+            modalBody.innerHTML = content;
+            modal.classList.remove('hidden');
+        }
+
+        function closeAiModal() {
+            if (currentAudioSource) {
+                currentAudioSource.stop();
+                currentAudioSource = null;
+            }
+            modal.classList.add('hidden');
+        }
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function callGemini(prompt, targetElement, base64ImageData = null, jsonSchema = null) {
+            if (targetElement) targetElement.innerHTML = '<div class="loader"></div>';
+            
+            const apiKey = "AIzaSyCrdmqHNN9-n80k8BQvsRZiJrRw4lSXr1M"; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
+            let parts = [{ text: prompt }];
+            if (base64ImageData) {
+                parts.push({ inlineData: { mimeType: 'image/jpeg', data: base64ImageData } });
+            }
+            
+            const payload = { contents: [{ role: "user", parts: parts }] };
+
+            if (jsonSchema) {
+                payload.generationConfig = {
+                    responseMimeType: "application/json",
+                    responseSchema: jsonSchema
+                };
+            }
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    if (jsonSchema) {
+                        return JSON.parse(text); // Return parsed JSON object
+                    }
+                    let htmlResult = text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-slate-800 block mb-2">$1</strong>')
+                        .replace(/^\* (.*$)/gm, '<li class="list-disc list-inside mb-2">$1</li>')
+                        .replace(/(\n)/g, '<br>')
+                        .replace(/<br><li/g, '<li')
+                        .replace(/<br><strong/g, '<strong');
+                    if (targetElement) targetElement.innerHTML = `<div class="text-slate-700 leading-relaxed">${htmlResult}</div>`;
+                    return { text: text, html: htmlResult };
+                } else {
+                    throw new Error("No candidates returned from API.");
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                if (targetElement) {
+                    targetElement.innerHTML = `<p class="text-red-500">Terjadi kesalahan saat menghubungi AI. Silakan periksa konsol untuk detail.</p>`;
+                }
+                return null; // Return null on error for JSON calls
+            }
+        }
+        
+        async function getFoodNutritionAnalysis() {
+            const fileInput = document.getElementById('sigita-food-pic');
+            const usia = document.getElementById('sigita-usia').value;
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Harap unggah foto makanan terlebih dahulu.");
+                return;
+            }
+            if (!usia) {
+                alert("Harap isi usia balita untuk analisis gizi yang lebih akurat.");
+                return;
+            }
+            
+            showAiModal('✨ Analisis Gizi dari Foto', '<div class="loader"></div>');
+            const file = fileInput.files[0];
+            const base64Image = await fileToBase64(file);
+            const prompt = `Anda adalah ahli gizi anak. Analisis gambar makanan ini. Identifikasi setiap item makanan, berikan perkiraan kasar kandungan nutrisinya (kalori, protein, lemak, karbohidrat), dan berikan evaluasi singkat apakah makanan ini cocok untuk balita usia ${usia} bulan. Jawaban dalam Bahasa Indonesia. Format dengan heading markdown.`;
+            callGemini(prompt, modalBody, base64Image);
+        }
+
+        async function autofillSaragaForm() {
+            const text = document.getElementById('saraga-paste-box').value;
+            if (!text.trim()) {
+                alert("Harap tempelkan data warga di dalam kotak teks.");
+                return;
+            }
+            const button = document.getElementById('autofill-btn');
+            button.disabled = true;
+            button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Menganalisis...`;
+
+            const schema = {
+                type: "OBJECT",
+                properties: {
+                    nama: { type: "STRING" },
+                    nik: { type: "STRING" },
+                    kk: { type: "STRING" },
+                    rt_rw: { type: "STRING" }
+                },
+                required: ["nama", "nik", "kk", "rt_rw"]
+            };
+            const prompt = `Ekstrak informasi berikut dari teks dan kembalikan sebagai JSON yang valid. Abaikan informasi lain. Teks: "${text}"`;
+            
+            const data = await callGemini(prompt, null, null, schema);
+
+            if (data) {
+                document.getElementById('saraga-nama').value = data.nama || '';
+                document.getElementById('saraga-nik').value = data.nik || '';
+                document.getElementById('saraga-kk').value = data.kk || '';
+                document.getElementById('saraga-rt').value = data.rt_rw || '';
+            } else {
+                alert("Gagal mengekstrak data. Pastikan format teks benar.");
+            }
+            
+            button.disabled = false;
+            button.innerHTML = `<i class="fas fa-magic-wand-sparkles"></i> ✨ Isi Otomatis dari Teks`;
+        }
+        
+        async function sendChatMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('chatbot-input');
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const userMessage = input.value.trim();
+
+            if (!userMessage) return;
+
+            // Display user message
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble chat-bubble-user';
+            userBubble.textContent = userMessage;
+            messagesContainer.appendChild(userBubble);
+            
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Display AI typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'chat-bubble chat-bubble-ai';
+            typingIndicator.innerHTML = '<div class="loader" style="width:20px; height:20px; border-width: 2px; margin: 0;"></div>';
+            messagesContainer.appendChild(typingIndicator);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            const prompt = `Anda adalah Asisten Kesehatan AI yang ramah untuk kader Posyandu. Jawab pertanyaan berikut dengan jelas dan sederhana. Selalu sertakan disclaimer di akhir jawaban bahwa informasi ini tidak menggantikan nasihat medis profesional. Pertanyaan: "${userMessage}"`;
+            
+            const aiResponse = await callGemini(prompt, null);
+
+            typingIndicator.innerHTML = aiResponse.html;
+            addPlayButton(typingIndicator, aiResponse.text);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function getBalitaNutritionAdvice() {
+            const usia = document.getElementById('sigita-usia').value;
+            if (!usia) { alert("Harap isi Usia balita."); return; }
+            showAiModal('✨ Saran Gizi untuk Balita', '<div class="loader"></div>');
+            const prompt = `Anda adalah asisten gizi anak untuk kader Posyandu. Berdasarkan usia balita ${usia} bulan, berikan saran gizi dan ide menu makanan sederhana dalam Bahasa Indonesia. Format dengan heading markdown **Saran Umum** dan **Contoh Ide Menu**.`;
+            callGemini(prompt, modalBody);
+        }
+
+        function getLansiaRecommendation() {
+            const riwayat = document.getElementById('sigilansa-riwayat').value;
+            if (!riwayat) { alert("Harap isi Riwayat Penyakit."); return; }
+            showAiModal('✨ Rekomendasi Kesehatan untuk Lansia', '<div class="loader"></div>');
+            const prompt = `Anda adalah asisten kesehatan untuk kader Posyandu. Berdasarkan riwayat penyakit lansia: "${riwayat}", buat ringkasan kesehatan dan rekomendasi gaya hidup dalam Bahasa Indonesia. Format dengan heading markdown **Ringkasan Kesehatan** dan **Rekomendasi Gaya Hidup**.`;
+            callGemini(prompt, modalBody);
+        }
+
+        function getRemajaAnemiaAnalysis() {
+            const gejala = document.getElementById('sigirema-anemia').value;
+            if (!gejala.trim()) { alert("Harap isi gejala anemia."); return; }
+            showAiModal('✨ Analisis Gejala Anemia pada Remaja', '<div class="loader"></div>');
+            const prompt = `Anda adalah konselor kesehatan remaja. Analisis gejala ini: "${gejala}". Jelaskan kemungkinan anemia, anjurkan makanan kaya zat besi, dan sarankan kapan harus ke dokter. Gunakan Bahasa Indonesia yang positif. Format dengan heading markdown **Analisis Gejala**, **Anjuran Makanan**, dan **Kapan Harus ke Dokter?**.`;
+            callGemini(prompt, modalBody);
+        }
+
+        function getLaporanSummary() {
+            const rows = document.querySelectorAll('#laporan-table-body tr');
+            if (rows.length === 0) { alert("Tidak ada data di laporan."); return; }
+            let dataLaporan = "Data laporan kesehatan:\n";
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                dataLaporan += `- Nama: ${cells[0].innerText}, Kategori: ${cells[1].innerText}, Status: ${cells[3].innerText}\n`;
+            });
+            showAiModal('✨ Ringkasan Laporan Kesehatan', '<div class="loader"></div>');
+            const prompt = `Anda adalah analis data kesehatan. Berdasarkan data ini:\n${dataLaporan}\nBuat ringkasan eksekutif, sorot tren, dan berikan rekomendasi tindak lanjut untuk kader. Gunakan Bahasa Indonesia. Format dengan heading markdown **Ringkasan Utama**, **Tren & Sorotan**, dan **Rekomendasi Tindak Lanjut**.`;
+            callGemini(prompt, modalBody);
+        }
+        
+        async function openAiAssistant() {
+            showAiModal('✨ Asisten Kesehatan AI', `
+                <div class="space-y-4">
+                    <p class="text-sm text-slate-600">Ajukan pertanyaan umum seputar kesehatan kepada asisten AI. Contoh: "Apa saja tanda-tanda stunting pada anak?"</p>
+                    <div>
+                        <textarea id="ai-assistant-question" rows="4" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ketik pertanyaan Anda di sini..."></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="askAiAssistant()" class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">Tanyakan</button>
+                    </div>
+                    <hr>
+                    <div id="ai-assistant-answer" class="mt-4"></div>
+                </div>
+            `);
+        }
+
+        async function askAiAssistant() {
+            const question = document.getElementById('ai-assistant-question').value;
+            if (!question.trim()) { alert("Harap ketik pertanyaan Anda."); return; }
+            const answerDiv = document.getElementById('ai-assistant-answer');
+            const prompt = `Anda adalah Asisten Kesehatan AI yang ramah dan berpengetahuan untuk kader Posyandu di Indonesia. Jawab pertanyaan berikut dengan jelas, sederhana, dan akurat dalam Bahasa Indonesia. Jawaban tidak boleh menggantikan nasihat medis profesional.\n\nPertanyaan: "${question}"`;
+            const response = await callGemini(prompt, answerDiv);
+            if (response && response.text) {
+                addPlayButton(answerDiv, response.text);
+            }
+        }
+
+        async function getDashboardInsights() {
+            const insightsDiv = document.getElementById('ai-insights');
+            const prompt = "Anda adalah seorang analis kesehatan publik. Berdasarkan data ringkasan berikut: Total Balita 125 (naik 5%), Total Remaja 340 (naik 2%), Total Lansia 88 (turun 1%). Berikan satu wawasan singkat (1-2 kalimat) yang paling penting untuk menjadi fokus perhatian kader kesehatan bulan ini.";
+            const response = await callGemini(prompt, insightsDiv);
+        }
+        
+        function generateAnnouncement() {
+            const topic = document.getElementById('announcement-topic').value;
+            if (!topic.trim()) {
+                alert("Harap masukkan isu utama pengumuman.");
+                return;
+            }
+            const resultContainer = document.getElementById('announcement-result-container');
+            resultContainer.classList.remove('hidden');
+            const resultDiv = document.getElementById('announcement-result');
+            const prompt = `Anda adalah seorang Kader Kesehatan Posyandu yang komunikatif. Buat sebuah draf pengumuman yang singkat, jelas, dan ramah untuk grup WhatsApp warga berdasarkan informasi berikut: "${topic}". Gunakan sapaan yang sesuai dan ajakan bertindak yang positif. Gunakan emoji secukupnya.`;
+            callGemini(prompt, resultDiv);
+        }
+
+        function getHealthPlan() {
+            const bp = document.getElementById('profile-blood-pressure').value;
+            const sugar = document.getElementById('profile-blood-sugar').value;
+            const complaints = document.getElementById('profile-complaints').value;
+
+            if (!bp && !sugar && !complaints) {
+                alert("Harap isi setidaknya satu data kesehatan Anda untuk membuat rencana.");
+                return;
+            }
+            showAiModal('✨ Rencana Sehat Mingguan', '<div class="loader"></div>');
+            const prompt = `Anda adalah seorang konsultan kesehatan personal. Berdasarkan data kesehatan berikut: Tekanan Darah: ${bp || 'N/A'}, Gula Darah: ${sugar || 'N/A'} mg/dL, Keluhan: ${complaints || 'Tidak ada'}. Buatkan rencana sehat mingguan yang sederhana, praktis, dan mudah diikuti untuk orang awam di Indonesia. Format jawaban dengan heading markdown **Fokus Utama Minggu Ini**, **Saran Pola Makan Harian**, dan **Saran Aktivitas Fisik Ringan**.`;
+            callGemini(prompt, modalBody);
+        }
+        
+        function copyToClipboard(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            const textarea = document.createElement("textarea");
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            alert("Teks berhasil disalin!");
+        }
+        
+        // --- Text-to-Speech Functions ---
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcmData, sampleRate) {
+            const numChannels = 1;
+            const bytesPerSample = 2; // 16-bit
+            const blockAlign = numChannels * bytesPerSample;
+            const byteRate = sampleRate * blockAlign;
+            const dataSize = pcmData.length * bytesPerSample;
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+
+            /* RIFF identifier */
+            view.setUint32(0, 1380533830, false); // "RIFF"
+            /* file length */
+            view.setUint32(4, 36 + dataSize, true);
+            /* RIFF type */
+            view.setUint32(8, 1463899717, false); // "WAVE"
+            /* format chunk identifier */
+            view.setUint32(12, 1718449184, false); // "fmt "
+            /* format chunk length */
+            view.setUint32(16, 16, true);
+            /* sample format (raw) */
+            view.setUint32(20, 1, true);
+            /* channel count */
+            view.setUint16(22, numChannels, true);
+            /* sample rate */
+            view.setUint32(24, sampleRate, true);
+            /* byte rate (sample rate * block align) */
+            view.setUint32(28, byteRate, true);
+            /* block align (channel count * bytes per sample) */
+            view.setUint16(32, blockAlign, true);
+            /* bits per sample */
+            view.setUint16(34, 16, true);
+            /* data chunk identifier */
+            view.setUint32(36, 1684108385, false); // "data"
+            /* data chunk length */
+            view.setUint32(40, dataSize, true);
+
+            const pcm16 = new Int16Array(pcmData.buffer);
+            for (let i = 0; i < pcmData.length; i++) {
+                view.setInt16(44 + i * 2, pcmData[i], true);
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        async function playText(text, button) {
+            if (currentAudioSource) {
+                currentAudioSource.stop();
+                currentAudioSource = null;
+                document.querySelectorAll('.play-tts-btn i').forEach(icon => icon.className = 'fas fa-play');
+                return;
+            }
+            
+            const icon = button.querySelector('i');
+            icon.className = 'fas fa-spinner fa-spin';
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: `Ucapkan dengan nada informatif dan ramah: ${text}` }] }],
+                generationConfig: { responseModalities: ["AUDIO"] },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType;
+
+                if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                    const sampleRate = parseInt(mimeType.match(/rate=(\d+)/)[1], 10);
+                    const pcmData = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmData);
+                    const wavBlob = pcmToWav(pcm16, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    
+                    if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const audioBuffer = await audioContext.decodeAudioData(await wavBlob.arrayBuffer());
+                    currentAudioSource = audioContext.createBufferSource();
+                    currentAudioSource.buffer = audioBuffer;
+                    currentAudioSource.connect(audioContext.destination);
+                    currentAudioSource.start(0);
+                    icon.className = 'fas fa-stop';
+                    currentAudioSource.onended = () => {
+                        icon.className = 'fas fa-play';
+                        currentAudioSource = null;
+                    };
+                } else {
+                    throw new Error("Audio data not found in response");
+                }
+            } catch (error) {
+                console.error("TTS Error:", error);
+                icon.className = 'fas fa-exclamation-circle';
+            }
+        }
+
+        function addPlayButton(container, text) {
+            const button = document.createElement('button');
+            button.className = 'play-tts-btn bg-indigo-100 text-indigo-600 rounded-full w-8 h-8 mt-2 hover:bg-indigo-200 transition-colors';
+            button.innerHTML = '<i class="fas fa-play"></i>';
+            button.onclick = () => playText(text, button);
+            container.appendChild(button);
+        }
+
+    </script>
+</body>
+</html>
