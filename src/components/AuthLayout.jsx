@@ -9,7 +9,7 @@ const AuthLayout = () => {
         <div className="relative p-8 md:p-12 md:w-1/2 bg-indigo-600 text-white rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
           <div className="relative z-10">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="SiCerdas Logo" className="w-12 h-12" />
+              <img src="/public/images/logo.png" alt="SiCerdas Logo" className="w-12 h-12" />
               <h1 className="text-3xl font-bold">SiCerdas</h1>
             </div>
             <p className="mt-4 text-indigo-200">
