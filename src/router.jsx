@@ -19,6 +19,7 @@ import TanyaAiPage from './pages/TanyaAiPage';
 import UserManagement from './pages/UserManagement'; // Import halaman baru
 
 import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './components/AuthContext';
 
 const router = createBrowserRouter([
   {
@@ -36,9 +37,11 @@ const router = createBrowserRouter([
   {
     path: 'dashboard',
     element: (
+       <AuthProvider>
       <ProtectedRoute>
         <DashboardLayout />
       </ProtectedRoute>
+    </AuthProvider>
     ),
     children: [
       { index: true, element: <DashboardPage /> },
