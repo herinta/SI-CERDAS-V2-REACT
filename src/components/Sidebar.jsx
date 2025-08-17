@@ -15,8 +15,7 @@ import {
   X
 } from 'lucide-react';
 
-const Sidebar = ({ isSidebarOpen, toggleSidebar, handleLogout }) => {
-  const userRole = 'admin'; 
+const Sidebar = ({ userRole, isSidebarOpen, toggleSidebar, handleLogout }) => {
 
   const handleLinkClick = () => {
     if (window.innerWidth < 1024 && isSidebarOpen) { // Hanya tutup di mobile
@@ -50,12 +49,14 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar, handleLogout }) => {
         { name: 'Profil Admin', href: '/dashboard/profil', icon: Settings }
       ]
     },
-    {
-      title: 'ADMINISTRASI',
-      items: [
-        ...(userRole === 'admin' ? [{ name: 'Manajemen Pengguna', href: '/dashboard/users', icon: Shield }] : [])
-      ]
-    }
+    ...(userRole === 'admin' ? [
+      {
+        title: 'ADMINISTRASI',
+        items: [
+          { name: 'Manajemen Pengguna', href: '/dashboard/users', icon: Shield }
+        ]
+      }
+    ] : []) 
   ];
 
   return (
