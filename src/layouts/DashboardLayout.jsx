@@ -1,24 +1,60 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
-import Header from '../components/Header';
+import React, { useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
+import { DataProvider } from "../contexts/DataContext"; // 1. IMPORT DATAPROVIDER (sesuaikan path jika perlu)
+import { ToastProvider } from "../contexts/ToastContext";
+import { ConfirmationProvider } from "../contexts/ConfirmationContext";
+import { supabase } from "../supabaseClient";
 
 const DashboardLayout = () => {
-  const [pageTitle, setPageTitle] = useState('Dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+   const navigate = useNavigate();
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+   const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error logging out:', error.message);
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
-    <div className="relative min-h-screen lg:flex bg-slate-100">
-      <Sidebar setPageTitle={setPageTitle} />
-      <div className="flex-1 flex flex-col lg:ml-64">
-        <Header pageTitle={pageTitle} />
-        <main className="flex-1 p-6">
-          <Outlet />
-        </main>
-      </div>
-      <button className="fixed bottom-6 right-6 bg-indigo-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition-transform hover:scale-110">
-        <i className="fas fa-robot text-2xl"></i>
-      </button>
-    </div>
+    <ConfirmationProvider>
+      <ToastProvider>
+        <div className="h-screen bg-gray-50 md:flex">
+          {/* Sidebar */}
+          <Sidebar
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+            handleLogout={handleLogout}
+          />
+
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col">
+            {/* Header */}
+            <Header
+              pageTitle="Dashboard SiCerdas"
+              toggleSidebar={toggleSidebar}
+              handleLogout={handleLogout}
+            />
+
+            {/* Page Content */}
+            <main className="flex-1 p-1 md:p-6 overflow-y-auto w-full">
+              {/* 2. BUNGKUS OUTLET DENGAN PROVIDER */}
+              <DataProvider>
+                <Outlet />
+              </DataProvider>
+            </main>
+          </div>
+        </div>
+      </ToastProvider>
+    </ConfirmationProvider>
   );
 };
 

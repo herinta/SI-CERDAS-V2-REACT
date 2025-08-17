@@ -1,50 +1,35 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { supabase } from './supabaseClient';
-import { AuthContext } from './AuthContext';
+import { Outlet } from 'react-router-dom';
 
 const DashboardLayout = () => {
-  const [pageTitle, setPageTitle] = useState('Dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const navigate = useNavigate();
-  const { session, userProfile, loading } = useContext(AuthContext);
 
-  // Proteksi route: kalau belum login redirect ke login
-  useEffect(() => {
-    if (!loading && !session) {
-      navigate('/login');
-    }
-  }, [loading, session, navigate]);
-
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error(error);
-    else navigate('/login');
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Jangan render layout kalau loading
-  if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
-
   return (
-    <div className="relative min-h-screen lg:flex bg-slate-100">
+    <div className="h-screen bg-gray-50 flex">
+      {/* Sidebar */}
       <Sidebar 
-        setPageTitle={setPageTitle} 
         isSidebarOpen={isSidebarOpen} 
         toggleSidebar={toggleSidebar} 
-        handleLogout={handleLogout} 
       />
-      <div className="flex-1 flex flex-col lg:ml-64">
+      
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
         <Header 
-          pageTitle={pageTitle} 
+          pageTitle="Dashboard SiCerdas" 
           toggleSidebar={toggleSidebar} 
-          handleLogout={handleLogout} 
         />
+        
+        {/* Page Content */}
         <main className="flex-1 p-6 overflow-y-auto">
-          <Outlet />
+          <Outlet/>
+         
         </main>
       </div>
     </div>
