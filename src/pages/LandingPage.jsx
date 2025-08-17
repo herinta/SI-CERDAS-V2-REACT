@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Users, BarChart3, Shield, Baby, User, UserCheck, Database, TrendingUp, FileText, CheckCircle } from 'lucide-react';
-import Navigation from './Navigation';
+import Navigation from '../components/Navigation';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+    const navigate = useNavigate();
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
     animate: { opacity: 1, y: 0 },
@@ -77,7 +79,7 @@ const LandingPage = () => {
 
             {/* Subtitle */}
             <motion.p 
-              className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed"
+              className="text-md md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed"
               variants={fadeInUp}
             >
               <strong>SiCerdas</strong> (Sistem Informasi Cermat dan Cerdas) adalah platform digital inovatif 
@@ -88,10 +90,11 @@ const LandingPage = () => {
 
             {/* CTA Button */}
             <motion.div variants={fadeInUp}>
-              <motion.button 
+              <motion.button
                 className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-10 py-4 rounded-full text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300"
                 whileHover={{ scale: 1.05, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/login')}
               >
                 <span className="flex items-center gap-3">
                   <Heart className="w-6 h-6" />
