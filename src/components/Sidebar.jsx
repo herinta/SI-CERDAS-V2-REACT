@@ -38,7 +38,7 @@ const Sidebar = ({ userRole, isSidebarOpen, toggleSidebar, handleLogout }) => {
         { name: 'Data Balita (SiGita)', href: '/dashboard/sigita', icon: Baby },
         { name: 'Data Remaja (SiGirema)', href: '/dashboard/sigirema', icon: User },
         { name: 'Data Lansia (SiGilansa)', href: '/dashboard/sigilansa', icon: UserCheck },
-        { name: 'Data Warga (Saraga)', href: '/dashboard/saraga', icon: Users }
+        { name: 'Data Warga (SiRaga)', href: '/dashboard/saraga', icon: Users }
       ]
     },
     {
