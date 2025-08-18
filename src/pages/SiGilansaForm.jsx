@@ -35,6 +35,7 @@ const SiGilansaForm = () => {
     td: "",
     gds: "",
     riwayat: "",
+    gender: "", // Tambahkan gender
   };
 
   const { showToast } = useToast();
@@ -74,6 +75,7 @@ const SiGilansaForm = () => {
       td: formData.td,
       gds: formData.gds ? parseInt(formData.gds, 10) : null,
       riwayat_penyakit: formData.riwayat,
+      gender: formData.gender, // Tambahkan gender
     };
 
     let result;
@@ -122,6 +124,7 @@ const SiGilansaForm = () => {
       nama: item.nama,
       ttl: item.ttl,
       usia: item.usia_tahun,
+      gender: item.gender || "",
       rt: item.rt,
       bb: item.bb_kg,
       tb: item.tb_cm,
@@ -223,8 +226,34 @@ const SiGilansaForm = () => {
         <DetailModal
           isOpen={!!detailItem}
           onClose={handleCloseDetail}
-          title="Detail Data Warga"
+          title="Detail Data Lansia"
           data={detailItem || {}}
+          fieldOrder={[
+            "nama",
+            "gender",
+            "ttl",
+            "usia_tahun",
+            "rt",
+            "bb_kg",
+            "tb_cm",
+            "td",
+            "gds",
+            "riwayat_penyakit",
+            "created_at",
+          ]}
+          fieldLabels={{
+            nama: "Nama",
+            gender: "Jenis Kelamin",
+            ttl: "Tanggal Lahir",
+            usia_tahun: "Usia",
+            rt: "RT/RW",
+            bb_kg: "Berat Badan (kg)",
+            tb_cm: "Tinggi Badan (cm)",
+            td: "Tekanan Darah",
+            gds: "Gula Darah",
+            riwayat_penyakit: "Riwayat Penyakit",
+            created_at: "Waktu Input",
+          }}
         />
 
         {isModalOpen && (
@@ -277,6 +306,24 @@ const SiGilansaForm = () => {
                   className="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
+            </div>
+            <div>
+              <label
+                htmlFor="sigilansa-gender"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Jenis Kelamin
+              </label>
+              <select
+                id="sigilansa-gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+              >
+                <option value="">Pilih Jenis Kelamin</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
             </div>
             <div>
               <label

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { callGemini } from "../api/gemini";
 import { supabase } from "../supabaseClient";
 import { useData } from "../contexts/DataContext";
@@ -20,22 +20,22 @@ const Modal = ({ title, content, onClose }) => (
   </div>
 );
 
-const SiGiremaForm = () => {
-  const { remajaList, loading, addRemaja, updateRemaja, deleteRemaja } =
-    useData();
-  const initialFormState = {
-    id: null,
-    nama: "",
-    ttl: "",
-    usia: "",
-    rt: "",
-    bb: "",
-    tb: "",
-    td: "",
-    hb: "",
-    anemia: "",
-  };
+const initialFormState = {
+  id: null,
+  nama: "",
+  ttl: "",
+  usia: "",
+  rt: "",
+  bb: "",
+  tb: "",
+  td: "",
+  hb: "",
+  anemia: "",
+  gender: "", // Tambahkan gender
+};
 
+const SiGiremaForm = () => {
+  const { remajaList, loading, addRemaja, updateRemaja, deleteRemaja } = useData();
   const { showToast } = useToast();
   const { askForConfirmation } = useConfirmation();
 
@@ -70,12 +70,11 @@ const SiGiremaForm = () => {
       td: formData.td,
       hb: formData.hb ? parseFloat(formData.hb) : null,
       anemia_symptoms: formData.anemia,
+      gender: formData.gender, // Tambahkan gender
     };
 
-    // --- PERBAIKAN DI SINI ---
     let result;
     if (editingId !== null) {
-      // Tambahkan .select().single() untuk mendapatkan data yang diupdate
       result = await supabase
         .from("sigirema")
         .update(dataToSubmit)
@@ -83,7 +82,6 @@ const SiGiremaForm = () => {
         .select()
         .single();
     } else {
-      // Tambahkan .select().single() untuk mendapatkan data yang baru dibuat
       result = await supabase
         .from("sigirema")
         .insert([dataToSubmit])
@@ -91,28 +89,23 @@ const SiGiremaForm = () => {
         .single();
     }
 
-    // Sekarang 'data' akan berisi objek yang valid
     const { data: newOrUpdatedData, error } = result;
-    // -------------------------
 
     if (error) {
       console.error("Error saving data:", error);
-      showToast("Gagal menyimpan data.", "error"); // Gunakan toast untuk error
+      showToast("Gagal menyimpan data.", "error");
     } else {
       showToast(
         `Data remaja berhasil ${editingId ? "diperbarui" : "disimpan"}!`
       );
-
-      // Panggil fungsi context dengan data yang valid
       if (editingId) {
         updateRemaja(newOrUpdatedData);
       } else {
         addRemaja(newOrUpdatedData);
       }
-
       setEditingId(null);
       setFormData(initialFormState);
-      setView("list"); // Ini sekarang akan berfungsi dengan benar
+      setView("list");
     }
     setIsSubmitting(false);
   };
@@ -129,6 +122,7 @@ const SiGiremaForm = () => {
       td: item.td,
       hb: item.hb,
       anemia: item.anemia_symptoms,
+      gender: item.gender || "", // Tambahkan gender
     });
     setEditingId(item.id);
     setView("form");
@@ -194,7 +188,7 @@ const SiGiremaForm = () => {
                     <td className="p-3">{item.nama}</td>
                     <td className="p-3">{item.rt}</td>
                     <td className="p-3 flex gap-2">
-                     <button
+                      <button
                         onClick={() => handleShowDetail(item)}
                         className="text-white hover:text-sky-700 bg-blue-400 py-1 px-2 md:py-1.5 rounded hover:bg-blue-100 text-xs md:text-sm md:px-3"
                         title="Lihat Detail"
@@ -223,8 +217,34 @@ const SiGiremaForm = () => {
         <DetailModal
           isOpen={!!detailItem}
           onClose={handleCloseDetail}
-          title="Detail Data Warga"
+          title="Detail Data Remaja"
           data={detailItem || {}}
+          fieldOrder={[
+            "nama",
+            "gender",
+            "ttl",
+            "usia_tahun",
+            "rt",
+            "bb_kg",
+            "tb_cm",
+            "td",
+            "hb",
+            "anemia_symptoms",
+            "created_at"
+          ]}
+          fieldLabels={{
+            nama: "Nama",
+            gender: "Jenis Kelamin",
+            ttl: "Tanggal Lahir",
+            usia_tahun: "Usia",
+            rt: "RT/RW",
+            bb_kg: "Berat Badan (kg)",
+            tb_cm: "Tinggi Badan (cm)",
+            td: "Tensi Darah",
+            hb: "Kadar HB",
+            anemia_symptoms: "Gejala Anemia",
+            created_at: "Waktu Input"
+          }}
         />
 
         {isModalOpen && (
@@ -338,6 +358,24 @@ const SiGiremaForm = () => {
                   className="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
+            </div>
+            <div>
+              <label
+                htmlFor="sigirema-gender"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Jenis Kelamin
+              </label>
+              <select
+                id="sigirema-gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+              >
+                <option value="">Pilih Jenis Kelamin</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
             </div>
           </div>
         </fieldset>

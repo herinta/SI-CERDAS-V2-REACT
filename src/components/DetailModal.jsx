@@ -1,11 +1,16 @@
 import React from 'react';
 
-// --- Komponen Detail Modal (Reusable & Dinamis) ---
-const DetailModal = ({ isOpen, onClose, title, data }) => {
+// --- Komponen Detail Modal (Reusable & Dinamis dengan urutan & label custom) ---
+const DetailModal = ({ isOpen, onClose, title, data, fieldOrder = [], fieldLabels = {} }) => {
   if (!isOpen) return null;
 
   // Daftar properti yang tidak ingin ditampilkan di modal detail
   const hiddenProps = ['id'];
+
+  // Filter dan urutkan field sesuai fieldOrder jika ada
+  const orderedFields = fieldOrder.length > 0
+    ? fieldOrder.filter(key => data.hasOwnProperty(key) && !hiddenProps.includes(key))
+    : Object.keys(data).filter(key => !hiddenProps.includes(key));
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4 animate-fade-in">
@@ -17,12 +22,9 @@ const DetailModal = ({ isOpen, onClose, title, data }) => {
           </button>
         </div>
         <div className="space-y-3 text-sm max-h-[60vh] overflow-y-auto pr-2">
-          {/* Mapping dinamis dari data yang diterima */}
-          {Object.entries(data).map(([key, value]) => {
-            // Jangan render properti yang ada di daftar 'hiddenProps'
-            if (hiddenProps.includes(key)) return null;
-
-            // Format tanggal agar lebih mudah dibaca
+          {/* Mapping dinamis dari data yang diterima sesuai urutan dan label */}
+          {orderedFields.map((key) => {
+            let value = data[key];
             let displayValue = value;
             if ((key === 'created_at' || key === 'ttl') && value) {
               try {
@@ -31,13 +33,14 @@ const DetailModal = ({ isOpen, onClose, title, data }) => {
                   timeStyle: key === 'created_at' ? 'short' : undefined 
                 });
               } catch (e) {
-                displayValue = value; // Biarkan nilai aslinya jika format tidak valid
+                displayValue = value;
               }
             }
-
             return (
               <div key={key} className="grid grid-cols-3 gap-4 border-b border-gray-100 py-2">
-                <span className="font-semibold text-gray-600 capitalize col-span-1">{key.replace(/_/g, ' ')}</span>
+                <span className="font-semibold text-gray-600 capitalize col-span-1">
+                  {fieldLabels[key] || key.replace(/_/g, ' ')}
+                </span>
                 <span className="text-gray-800 col-span-2 break-words">{displayValue || '-'}</span>
               </div>
             );

@@ -35,6 +35,7 @@ const SiGitaForm = () => {
     lila: "",
     lk: "",
     lp: "",
+    gender: "", // Tambahkan gender
     foodPic: null,
   };
 
@@ -109,6 +110,7 @@ const SiGitaForm = () => {
       lila_cm: formData.lila ? parseFloat(formData.lila) : null,
       lk_cm: formData.lk ? parseFloat(formData.lk) : null,
       lp_cm: formData.lp ? parseFloat(formData.lp) : null,
+      gender: formData.gender, // Tambahkan gender
       food_pic_url: imageUrl,
     };
 
@@ -172,6 +174,7 @@ const SiGitaForm = () => {
       lila: item.lila_cm,
       lk: item.lk_cm,
       lp: item.lp_cm,
+      gender: item.gender || "", // Tambahkan gender
       foodPic: null,
       food_pic_url: item.food_pic_url,
     });
@@ -275,8 +278,38 @@ const SiGitaForm = () => {
         <DetailModal
           isOpen={!!detailItem}
           onClose={handleCloseDetail}
-          title="Detail Data Warga"
+          title="Detail Data Balita"
           data={detailItem || {}}
+          fieldOrder={[
+            "nama",
+            "gender",
+            "ttl",
+            "pj",
+            "rt",
+            "usia_bulan",
+            "bb_kg",
+            "tb_cm",
+            "lila_cm",
+            "lk_cm",
+            "lp_cm",
+            "food_pic_url",
+            "created_at",
+          ]}
+          fieldLabels={{
+            nama: "Nama",
+            gender: "Jenis Kelamin",
+            ttl: "Tanggal Lahir",
+            pj: "Penanggung Jawab",
+            rt: "RT/RW",
+            usia_bulan: "Usia (bulan)",
+            bb_kg: "Berat Badan (kg)",
+            tb_cm: "Tinggi Badan (cm)",
+            lila_cm: "LILA (cm)",
+            lk_cm: "Lingkar Kepala (cm)",
+            lp_cm: "Lingkar Perut (cm)",
+            food_pic_url: "Foto Makanan",
+            created_at: "Waktu Input",
+          }}
         />
 
         {isModalOpen && (
@@ -329,6 +362,24 @@ const SiGitaForm = () => {
                   className="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
+            </div>
+            <div>
+              <label
+                htmlFor="sigita-gender"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Jenis Kelamin
+              </label>
+              <select
+                id="sigita-gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+              >
+                <option value="">Pilih Jenis Kelamin</option>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
             </div>
             <div>
               <label
