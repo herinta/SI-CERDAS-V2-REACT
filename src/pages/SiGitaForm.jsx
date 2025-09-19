@@ -538,50 +538,10 @@ const SiGitaForm = () => {
           </div>
         </fieldset>
 
-        <fieldset>
-          <legend className="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">
-            Analisis Gizi Makanan (AI)
-          </legend>
-          <div>
-            <label
-              htmlFor="sigita-food-pic"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Unggah Foto Makanan Balita
-            </label>
-            <div className="mt-2 flex flex-col sm:flex-row items-center gap-4">
-              <img
-                id="sigita-food-preview"
-                src={foodPreview}
-                alt="Pratinjau Makanan"
-                className="w-24 h-24 rounded-md object-cover flex-shrink-0"
-              />
-              <input
-                type="file"
-                id="sigita-food-pic"
-                className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-                accept="image/*"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-        </fieldset>
+       
 
         <div className="flex flex-col sm:flex-row justify-end items-center pt-4 gap-4">
-          <button
-            type="button"
-            onClick={getFoodNutritionAnalysis}
-            className="w-full sm:w-auto bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-200 flex items-center justify-center gap-2"
-          >
-            ✨ Analisis Gizi Foto
-          </button>
-          <button
-            type="button"
-            onClick={getBalitaNutritionAdvice}
-            className="w-full sm:w-auto bg-amber-500 text-white px-6 py-2 rounded-lg hover:bg-amber-600 transition duration-200 flex items-center justify-center gap-2"
-          >
-            ✨ Buat Saran Gizi
-          </button>
+          
           <button
             type="submit"
             disabled={isSubmitting}

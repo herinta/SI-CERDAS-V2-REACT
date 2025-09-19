@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { callGemini } from "../api/gemini";
+import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useData } from "../contexts/DataContext";
+import { callGemini } from "../api/gemini";
 import { useToast } from "../contexts/ToastContext";
 import { useConfirmation } from "../contexts/ConfirmationContext";
 import DetailModal from "../components/DetailModal";
@@ -35,7 +35,7 @@ const SiGilansaForm = () => {
     td: "",
     gds: "",
     riwayat: "",
-    gender: "", // Tambahkan gender
+    gender: "",
   };
 
   const { showToast } = useToast();
@@ -44,14 +44,15 @@ const SiGilansaForm = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [editingId, setEditingId] = useState(null);
   const [view, setView] = useState("list");
-  const [isSubmitting, setIsSubmitting] = useState(false); // Loading khusus untuk submit
-
-  // useEffect untuk fetch data sudah TIDAK DIPERLUKAN
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [detailItem, setDetailItem] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState("");
   const [modalTitle, setModalTitle] = useState("");
-  const [detailItem, setDetailItem] = useState(null);
+
+  // State untuk menyimpan nilai filter RW yang dipilih
+  const [selectedRW, setSelectedRW] = useState("");
 
   const handleShowDetail = (item) => setDetailItem(item);
   const handleCloseDetail = () => setDetailItem(null);
@@ -75,7 +76,7 @@ const SiGilansaForm = () => {
       td: formData.td,
       gds: formData.gds ? parseInt(formData.gds, 10) : null,
       riwayat_penyakit: formData.riwayat,
-      gender: formData.gender, // Tambahkan gender
+      gender: formData.gender,
     };
 
     let result;
@@ -103,14 +104,11 @@ const SiGilansaForm = () => {
       showToast(
         `Data lansia berhasil ${editingId ? "diperbarui" : "disimpan"}!`
       );
-
-      // 3. Panggil fungsi dari Context
       if (editingId) {
         updateLansia(newOrUpdatedData);
       } else {
         addLansia(newOrUpdatedData);
       }
-
       setEditingId(null);
       setFormData(initialFormState);
       setView("list");
@@ -150,7 +148,6 @@ const SiGilansaForm = () => {
         showToast("Gagal menghapus data.");
       } else {
         showToast("Data berhasil dihapus.");
-        // 4. Panggil fungsi dari Context
         deleteLansia(id);
       }
     }
@@ -162,21 +159,59 @@ const SiGilansaForm = () => {
     setView("form");
   };
 
-  const getLansiaRecommendation = async () => {
-    /* ... kode AI Anda ... */
-  };
+  // Logika untuk mendapatkan daftar RW unik dari data lansia
+  const uniqueRWs = [
+    ...new Set(
+      lansiaList.map((lansia) =>
+        lansia.rt && lansia.rt.includes("/") ? lansia.rt.split("/")[1] : ""
+      )
+    ),
+  ].filter((rw) => rw !== "");
+
+  // Logika untuk mengurutkan (sort) dan menyaring (filter) data lansia
+  const filteredLansia = [...lansiaList]
+    .sort((a, b) => {
+      // Mengurutkan berdasarkan RW
+      const rwA = parseInt((a.rt || "0/0").split("/")[1] || 0, 10);
+      const rwB = parseInt((b.rt || "0/0").split("/")[1] || 0, 10);
+      if (rwA !== rwB) return rwA - rwB;
+
+      // Jika RW sama, urutkan berdasarkan RT
+      const rtA = parseInt((a.rt || "0/0").split("/")[0] || 0, 10);
+      const rtB = parseInt((b.rt || "0/0").split("/")[0] || 0, 10);
+      return rtA - rtB;
+    })
+    .filter((item) =>
+      // Filter berdasarkan RW yang dipilih
+      selectedRW ? item.rt && item.rt.split("/")[1] === selectedRW : true
+    );
 
   if (view === "list") {
     return (
-      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-white p-3 sm:p-8 rounded-lg shadow-md">
+        <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-3">
           <h2 className="md:text-2xl font-bold text-slate-800">Data Lansia</h2>
-          <button
-            onClick={handleAddNew}
-            className="text-xs md:text-md bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200"
-          >
-            Tambah Data
-          </button>
+          <div className="flex gap-3">
+            {/* Dropdown filter RW */}
+            <select
+              value={selectedRW}
+              onChange={(e) => setSelectedRW(e.target.value)}
+              className="border rounded px-3 py-2 text-sm"
+            >
+              <option value="">Semua RW</option>
+              {uniqueRWs.map((rw) => (
+                <option key={rw} value={rw}>
+                  RW {rw}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleAddNew}
+              className="text-xs md:text-md bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200"
+            >
+              Tambah Data
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto">
           {loading.lansia ? (
@@ -191,7 +226,8 @@ const SiGilansaForm = () => {
                 </tr>
               </thead>
               <tbody>
-                {lansiaList.map((item) => (
+                {/* Gunakan data filteredLansia yang sudah diolah */}
+                {filteredLansia.map((item) => (
                   <tr key={item.id} className="border-b">
                     <td className="p-3">{item.nama}</td>
                     <td className="p-3">{item.rt}</td>
@@ -203,16 +239,17 @@ const SiGilansaForm = () => {
                       >
                         Detail
                       </button>
-
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-blue-500 hover:text-blue-700"
+                        title="Edit Data"
                       >
                         <i className="fas fa-edit"></i>
                       </button>
                       <button
                         onClick={() => handleDelete(item.id)}
                         className="text-red-500 hover:text-red-700"
+                        title="Hapus Data"
                       >
                         <i className="fas fa-trash"></i>
                       </button>
@@ -304,6 +341,7 @@ const SiGilansaForm = () => {
                   onChange={handleChange}
                   value={formData.nama}
                   className="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+                  required
                 />
               </div>
             </div>
@@ -319,6 +357,7 @@ const SiGilansaForm = () => {
                 value={formData.gender}
                 onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+                required
               >
                 <option value="">Pilih Jenis Kelamin</option>
                 <option value="Laki-laki">Laki-laki</option>
@@ -362,6 +401,7 @@ const SiGilansaForm = () => {
                   onChange={handleChange}
                   value={formData.usia}
                   className="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+                  required
                 />
               </div>
             </div>
@@ -383,6 +423,7 @@ const SiGilansaForm = () => {
                   onChange={handleChange}
                   value={formData.rt}
                   className="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+                  required
                 />
               </div>
             </div>
@@ -458,35 +499,8 @@ const SiGilansaForm = () => {
             </div>
           </div>
         </fieldset>
-        <fieldset>
-          <legend className="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">
-            Kondisi Kesehatan (AI)
-          </legend>
-          <div>
-            <label
-              htmlFor="sigilansa-riwayat"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Riwayat Penyakit & Keluhan
-            </label>
-            <textarea
-              id="sigilansa-riwayat"
-              rows="3"
-              placeholder="Contoh: Punya riwayat hipertensi, sering merasa pusing dan pegal di leher..."
-              onChange={handleChange}
-              value={formData.riwayat}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
-            ></textarea>
-          </div>
-        </fieldset>
+
         <div className="flex flex-col sm:flex-row justify-end items-center pt-4 gap-4">
-          <button
-            type="button"
-            onClick={getLansiaRecommendation}
-            className="w-full sm:w-auto bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition duration-200 flex items-center justify-center gap-2"
-          >
-            ✨ Buat Rekomendasi
-          </button>
           <button
             type="submit"
             disabled={isSubmitting}

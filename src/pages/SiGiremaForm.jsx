@@ -450,35 +450,9 @@ const SiGiremaForm = () => {
             </div>
           </div>
         </fieldset>
-        <fieldset>
-          <legend className="text-xl font-semibold text-slate-700 border-b pb-4 w-full mb-6">
-            Skrining Anemia (AI)
-          </legend>
-          <div>
-            <label
-              htmlFor="sigirema-anemia"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Gejala yang Dirasakan
-            </label>
-            <textarea
-              id="sigirema-anemia"
-              rows="3"
-              placeholder="Contoh: Sering pusing, mudah lelah, wajah pucat..."
-              onChange={handleChange}
-              value={formData.anemia}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
-            ></textarea>
-          </div>
-        </fieldset>
+        
         <div className="flex flex-col sm:flex-row justify-end items-center pt-4 gap-4">
-          <button
-            type="button"
-            onClick={getRemajaAnemiaAnalysis}
-            className="w-full sm:w-auto bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-pink-600 transition duration-200 flex items-center justify-center gap-2"
-          >
-            ✨ Analisis Gejala Anemia
-          </button>
+         
           <button
             type="submit"
             disabled={isSubmitting}

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { supabase } from "../supabaseClient";
-import { useData } from "../contexts/DataContext"; // <-- 1. IMPORT hook useData
-import { callGemini } from "../api/gemini"; // Asumsikan path ini benar
-import { useToast } from "../contexts/ToastContext"; // 1. Impor hook useToast
+import { useData } from "../contexts/DataContext";
+import { callGemini } from "../api/gemini";
+import { useToast } from "../contexts/ToastContext";
 import { useConfirmation } from "../contexts/ConfirmationContext";
 import DetailModal from "../components/DetailModal";
 
-// Komponen Modal tidak perlu diubah
 const Modal = ({ title, content, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
     <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl">
@@ -22,7 +21,6 @@ const Modal = ({ title, content, onClose }) => (
 );
 
 const SaragaForm = () => {
-  // 2. Ambil data dan fungsi dari Context
   const { wargaList, loading, addWarga, updateWarga, deleteWarga } = useData();
   const { showToast } = useToast();
   const { askForConfirmation } = useConfirmation();
@@ -31,9 +29,9 @@ const SaragaForm = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [editingId, setEditingId] = useState(null);
   const [view, setView] = useState("list");
-  const [pasteData, setPasteData] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // Loading khusus untuk form submit
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [detailItem, setDetailItem] = useState(null);
+  const [selectedRW, setSelectedRW] = useState(""); // ✅ filter RW
 
   const handleShowDetail = (item) => setDetailItem(item);
   const handleCloseDetail = () => setDetailItem(null);
@@ -76,14 +74,11 @@ const SaragaForm = () => {
       showToast("Gagal menyimpan data.");
     } else {
       showToast(`Data berhasil ${editingId ? "diperbarui" : "disimpan"}!`);
-
-      // 3. Panggil fungsi dari Context
       if (editingId) {
         updateWarga(newOrUpdatedData);
       } else {
         addWarga(newOrUpdatedData);
       }
-
       setEditingId(null);
       setFormData(initialFormState);
       setView("list");
@@ -115,7 +110,6 @@ const SaragaForm = () => {
         showToast("Gagal menghapus data.");
       } else {
         showToast("Data berhasil dihapus.");
-        // 4. Panggil fungsi dari Context
         deleteWarga(id);
       }
     }
@@ -127,52 +121,58 @@ const SaragaForm = () => {
     setView("form");
   };
 
-  const autofillSaragaForm = async () => {
-    if (!pasteData.trim()) {
-      showToast("Harap tempelkan data warga di dalam kotak teks.");
-      return;
-    }
-    const schema = {
-      type: "OBJECT",
-      properties: {
-        nama: { type: "STRING" },
-        rt_rw: { type: "STRING" },
-      },
-      required: ["nama", "rt_rw"],
-    };
-    const prompt = `Ekstrak informasi berikut dari teks dan kembalikan sebagai JSON yang valid. Abaikan informasi lain. Teks: "${pasteData}"`;
-    const result = await callGemini(prompt, null, schema);
-    if (result) {
-      setFormData((prev) => ({
-        ...prev,
-        nama: result.nama || prev.nama,
-        rt: result.rt_rw || prev.rt,
-      }));
-    } else {
-      showToast("Gagal mengekstrak data. Pastikan format teks benar.");
-    }
-  };
+  // ✅ Ambil daftar RW unik dari data
+  const uniqueRWs = [
+    ...new Set(
+      wargaList.map((w) => (w.rt.includes("/") ? w.rt.split("/")[1] : ""))
+    ),
+  ].filter((rw) => rw !== "");
+
+  // ✅ Sort dan filter data sebelum render
+  const filteredWarga = [...wargaList]
+    .sort((a, b) => {
+      const rwA = parseInt(a.rt.split("/")[1] || 0, 10);
+      const rwB = parseInt(b.rt.split("/")[1] || 0, 10);
+      return rwA - rwB;
+    })
+    .filter((item) =>
+      selectedRW ? item.rt.split("/")[1] === selectedRW : true
+    );
 
   if (view === "list") {
     return (
       <div className="bg-white p-3 sm:p-8 rounded-lg shadow-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="md:text-2xl font-bold text-slate-800">Data Warga </h2>
-          <button
-            onClick={handleAddNew}
-            className="text-xs md:text-md bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200"
-          >
-            Tambah Data
-          </button>
+        <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-3">
+          <h2 className="md:text-2xl font-bold text-slate-800">Data Warga</h2>
+          <div className="flex gap-3">
+            {/* ✅ Dropdown filter RW */}
+            <select
+              value={selectedRW}
+              onChange={(e) => setSelectedRW(e.target.value)}
+              className="border rounded px-3 py-2 text-sm"
+            >
+              <option value="">Semua RW</option>
+              {uniqueRWs.map((rw) => (
+                <option key={rw} value={rw}>
+                  RW {rw}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleAddNew}
+              className="text-xs md:text-md bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200"
+            >
+              Tambah Data
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto">
-          {/* 5. Gunakan loading.warga dari context */}
           {loading.warga ? (
             <p>Memuat data warga...</p>
           ) : (
             <table className="w-full min-w-max text-left">
-              <thead className="bg-slate-100 px-10">
-                <tr className="px-5">
+              <thead className="bg-slate-100">
+                <tr>
                   <th className="p-3 text-xs md:text-sm font-semibold">Nama</th>
                   <th className="p-3 text-xs md:text-sm font-semibold">
                     RT/RW
@@ -181,11 +181,11 @@ const SaragaForm = () => {
                 </tr>
               </thead>
               <tbody>
-                {wargaList.map((item) => (
-                  <tr key={item.id} className="border-b text">
-                    <td className="p-3  text-xs md:text-sm">{item.nama}</td>
-                    <td className="p-3  text-xs md:text-sm">{item.rt}</td>
-                    <td className="p-3  text-xs md:text-sm flex gap-2 ">
+                {filteredWarga.map((item) => (
+                  <tr key={item.id} className="border-b">
+                    <td className="p-3 text-xs md:text-sm">{item.nama}</td>
+                    <td className="p-3 text-xs md:text-sm">{item.rt}</td>
+                    <td className="p-3 text-xs md:text-sm flex gap-2">
                       <button
                         onClick={() => handleShowDetail(item)}
                         className="text-white hover:text-sky-700 bg-blue-400 py-1 px-2 md:py-1.5 rounded hover:bg-blue-100 text-xs md:text-sm md:px-3"
@@ -243,31 +243,6 @@ const SaragaForm = () => {
           Kembali
         </button>
       </div>
-      <div className="mb-6">
-        <label
-          htmlFor="saraga-paste-box"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Tempel Data Warga di Sini
-        </label>
-        <textarea
-          id="saraga-paste-box"
-          rows="4"
-          value={pasteData}
-          onChange={(e) => setPasteData(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="Contoh: Nama: Budi Santoso, RT/RW: 001/005"
-        ></textarea>
-        <button
-          id="autofill-btn"
-          onClick={autofillSaragaForm}
-          className="mt-2 w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 flex items-center justify-center gap-2"
-        >
-          {" "}
-          <i className="fas fa-magic-wand-sparkles"></i> ✨ Isi Otomatis dari
-          Teks{" "}
-        </button>
-      </div>
       <hr className="my-6" />
       <form id="form-saraga" className="space-y-6" onSubmit={handleSubmit}>
         <div>
@@ -277,19 +252,14 @@ const SaragaForm = () => {
           >
             Nama Lengkap
           </label>
-          <div className="relative mt-1">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <i className="fas fa-user text-gray-400"></i>
-            </span>
-            <input
-              type="text"
-              id="saraga-nama"
-              onChange={handleChange}
-              value={formData.nama}
-              className="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
-              required
-            />
-          </div>
+          <input
+            type="text"
+            id="saraga-nama"
+            onChange={handleChange}
+            value={formData.nama}
+            className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+            required
+          />
         </div>
         <div>
           <label
@@ -302,7 +272,7 @@ const SaragaForm = () => {
             id="saraga-gender"
             value={formData.gender}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
           >
             <option value="">Pilih Jenis Kelamin</option>
             <option value="Laki-laki">Laki-laki</option>
@@ -316,19 +286,14 @@ const SaragaForm = () => {
           >
             RT/RW
           </label>
-          <div className="relative mt-1">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <i className="fas fa-map-marker-alt text-gray-400"></i>
-            </span>
-            <input
-              type="text"
-              id="saraga-rt"
-              placeholder="001/002"
-              onChange={handleChange}
-              value={formData.rt}
-              className="pl-10 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
-            />
-          </div>
+          <input
+            type="text"
+            id="saraga-rt"
+            placeholder="001/002"
+            onChange={handleChange}
+            value={formData.rt}
+            className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+          />
         </div>
         <div className="flex justify-end pt-4">
           <button
