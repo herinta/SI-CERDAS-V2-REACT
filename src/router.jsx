@@ -22,6 +22,8 @@ import UserManagement from './pages/UserManagement';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
+import Artikel from './pages/Artikel';
+import Edukasi from './pages/Edukasi';
 
 const router = createBrowserRouter([
   // --- Rute Publik ---
@@ -29,6 +31,14 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <LandingPage />, // LandingPage sekarang menjadi halaman utama
+  },
+  {
+    path: '/artikel',
+    element: <Artikel />, // Halaman artikel
+  },
+  {
+    path: '/edukasi',
+    element: <Edukasi />, // Halaman edukasi (sementara menggunakan komponen Artikel)
   },
   {
     path: '/login',

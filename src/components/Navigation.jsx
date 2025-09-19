@@ -18,7 +18,9 @@ const Navigation = () => {
   const navItems = [
     { name: 'Beranda', href: '#home' },
     { name: 'Fitur', href: '#features' },
-    { name: 'Tentang', href: '#about' }
+    { name: 'Tentang', href: '#about' },
+    { name: 'Artikel', href: '/artikel' },
+    { name: 'Edukasi', href: '/edukasi' }
   ];
 
   return (
