@@ -54,7 +54,7 @@ const MenuUtama = () => {
             <i className="fas fa-users text-2xl"></i>
           </div>
           <div className="mt-4">
-            <h3 className="text-xl font-bold text-slate-800">Data Warga</h3>
+            <h3 className="text-xl font-bold text-slate-800">Data Cargiever</h3>
             <p className="text-slate-500">Saraga</p>
           </div>
           <div className="arrow-icon absolute bottom-0 right-0 p-4 text-purple-600">

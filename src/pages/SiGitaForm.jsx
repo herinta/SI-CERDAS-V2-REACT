@@ -303,7 +303,7 @@ const SiGitaForm = () => {
             rt: "RT/RW",
             usia_bulan: "Usia (bulan)",
             bb_kg: "Berat Badan (kg)",
-            tb_cm: "Tinggi Badan (cm)",
+            tb_cm: "Tinggi/Panjang Badan (cm)",
             lila_cm: "LILA (cm)",
             lk_cm: "Lingkar Kepala (cm)",
             lp_cm: "Lingkar Perut (cm)",

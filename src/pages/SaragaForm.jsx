@@ -99,7 +99,7 @@ const SaragaForm = () => {
 
   const handleDelete = async (id) => {
     const confirmed = await askForConfirmation({
-      title: "Hapus Data Warga",
+      title: "Hapus Cargiever",
       message:
         "Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.",
     });
@@ -143,7 +143,7 @@ const SaragaForm = () => {
     return (
       <div className="bg-white p-3 sm:p-8 rounded-lg shadow-md">
         <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-3">
-          <h2 className="md:text-2xl font-bold text-slate-800">Data Warga</h2>
+          <h2 className="md:text-2xl font-bold text-slate-800">Data Cargiever</h2>
           <div className="flex gap-3">
             {/* ✅ Dropdown filter RW */}
             <select
@@ -168,7 +168,7 @@ const SaragaForm = () => {
         </div>
         <div className="overflow-x-auto">
           {loading.warga ? (
-            <p>Memuat data warga...</p>
+            <p>Memuat data cargiever...</p>
           ) : (
             <table className="w-full min-w-max text-left">
               <thead className="bg-slate-100">
@@ -215,13 +215,14 @@ const SaragaForm = () => {
         <DetailModal
           isOpen={!!detailItem}
           onClose={handleCloseDetail}
-          title="Detail Data Warga"
+          title="Detail Cargiever"
           data={detailItem || {}}
-          fieldOrder={["nama", "gender", "rt", "created_at"]}
+          fieldOrder={["nama", "gender", "rt", "yang_didampingi", "created_at"]}
           fieldLabels={{
             nama: "Nama Lengkap",
             gender: "Jenis Kelamin",
             rt: "RT/RW",
+            yang_didampingi: "Data Yang Didampingi",
             created_at: "Waktu Input",
           }}
         />
@@ -233,7 +234,7 @@ const SaragaForm = () => {
     <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="md:text-2xl font-bold text-slate-800">
-          {editingId ? "Edit Data Warga" : "Tambah Data Warga"}
+          {editingId ? "Edit Data Cargiever" : "Tambah Data Cargiever"}
         </h2>
         <button
           type="button"
@@ -293,6 +294,22 @@ const SaragaForm = () => {
             onChange={handleChange}
             value={formData.rt}
             className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+                <div>
+          <label
+            htmlFor="saraga-yang_didampingi"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Data Yang Didampingi
+          </label>
+          <input
+            type="text"
+            id="saraga-yang_didampingi"
+            onChange={handleChange}
+            value={formData.yang_didampingi}
+            className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+            required
           />
         </div>
         <div className="flex justify-end pt-4">
