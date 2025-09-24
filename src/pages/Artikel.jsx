@@ -10,7 +10,7 @@ const articleData = [
     category: 'Info Program',
     title: 'Grand Launching PPK Ormawa Himapersa',
     summary: 'Program PPK Ormawa HIMAPERSA 2025 dengan tajuk Mawas Warga Plus & SARAGA (Satu Rumah Satu Caregiver) resmi diluncurkan di Balai Kelurahan Plamongansari...',
-    link: '#', 
+    link: 'https://unimus.ac.id/grand-launching-program-ppk-ormawa-himapersa-2025-resmi-digelar-di-plamongansari', 
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ const articleData = [
     category: 'Workshop Kader',
     title: 'Workshop Sentuh untuk Calon Kader Caregiver',
     summary: 'Dalam rangka mendukung program "Satu Rumah Satu Caregiver" (SARAGA), tim PPK Ormawa Himapersa menggelar "Workshop Sentuh" untuk membekali masyarakat dengan keterampilan terapi holistik.',
-    link: '#',
+    link: 'https://www.netralnews.com/menginisiasi-program-satu-rumah-satu-caregiver-ppk-ormawa-himapersa-gelar-workshop-sentuh/MTFFQnRLcGthS1BFWHMxeTdOVUFoZz09',
   },
   {
     id: 3,
@@ -26,7 +26,15 @@ const articleData = [
     category: 'Kesehatan Remaja',
     title: 'Kelas Remaja: Edukasi, Gizi, dan Pencegahan Anemia',
     summary: 'Program Kelas Remaja memberikan edukasi gizi seimbang, pencegahan anemia, serta pemeriksaan kesehatan gratis yang meliputi cek Hb dan pengukuran antropometri.',
-    link: '#',
+    link: 'https://www.kompasiana.com/rindangmayda4840/68b676c3c925c42026321862/ppk-ormawa-himapersa-gelar-kelas-remaja-cegah-anemia-menuju-kelurahan-zero-stunting',
+  },
+  {
+    id: 4,
+    imageUrl: 'images/sigap.png', // Pastikan path ini benar
+    category: 'Kesehatan Remaja',
+    title: 'SIGAP : Siap Tanggap Pertolongan Pertama',
+    summary: 'Pelatihan Siap Tanggap Pertolongan Pertama (SIGAP), untuk Meningkatkan Kapasitas kader dalam Menghadapi Kondisi Kegawatdaruratan.',
+    link: 'https://www.netralnews.com/tim-ppk-ormawa-himapersa-unimus-gelar-pelatihan-siap-tanggap-pertolongan-pertama/TlFHWlg4TWh6cE1TQjJ1OFRSb0Z2QT09',
   },
 ];
 
@@ -63,7 +71,7 @@ const Artikel = () => {
       <div className="container mx-auto px-4 md:py-28 py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800">Kegiatan dan Program Kerja</h1>
-          <p className="mt-2 text-lg text-gray-600">Kumpulan informasi terkini seputar kesehatan keluarga dari Posyandu.</p>
+          <p className="mt-2 text-lg text-gray-600">Kumpulan Informasi Seputar Kegiatan PPK ORMAWA HIMAPERSA di Desa Plamongansari.</p>
         </div>
 
         {/* Grid untuk menampilkan kartu-kartu artikel */}

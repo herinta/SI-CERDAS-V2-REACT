@@ -301,7 +301,7 @@ const SaragaForm = () => {
             htmlFor="saraga-yang_didampingi"
             className="block text-sm font-medium text-gray-700"
           >
-            Data Yang Didampingi
+            Kasus Yang Didampingi
           </label>
           <input
             type="text"
