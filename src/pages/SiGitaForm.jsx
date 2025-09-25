@@ -485,7 +485,7 @@ const SiGitaForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Tinggi (cm)
+                Tinggi/Panjang Badan (cm)
               </label>
               <input
                 type="number"
