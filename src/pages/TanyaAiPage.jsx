@@ -25,7 +25,7 @@ const TanyaAiPage = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
 
-    const prompt = `Anda adalah Asisten Kesehatan AI yang ramah untuk kader Posyandu. Jawab pertanyaan berikut dengan jelas dan sederhana. Selalu sertakan disclaimer di akhir jawaban bahwa informasi ini tidak menggantikan nasihat medis profesional. Pertanyaan: "${input}"`;
+    const prompt = `Anda adalah Asisten Kesehatan AI yang ramah untuk kader WARGA MAWAS+ & CARGIEVER. Jawab pertanyaan berikut dengan jelas dan sederhana. Selalu sertakan disclaimer di akhir jawaban bahwa informasi ini tidak menggantikan nasihat medis profesional. Pertanyaan: "${input}"`;
     const result = await callGemini(prompt);
     
     let aiResponse;
