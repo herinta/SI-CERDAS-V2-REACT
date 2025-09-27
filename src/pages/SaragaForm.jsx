@@ -1,326 +1,558 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useData } from "../contexts/DataContext";
-import { callGemini } from "../api/gemini";
 import { useToast } from "../contexts/ToastContext";
 import { useConfirmation } from "../contexts/ConfirmationContext";
 import DetailModal from "../components/DetailModal";
 
-const Modal = ({ title, content, onClose }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-    <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold">{title}</h3>
-        <button onClick={onClose} className="md:text-2xl">
-          &times;
-        </button>
-      </div>
-      <div>{content}</div>
-    </div>
-  </div>
-);
+// Constants
+const INITIAL_FORM_STATE = {
+  id: null,
+  nama: "",
+  rt: "",
+  rw_id: "",
+  gender: "",
+  nohp: "",
+  penyakit_warga: [""],
+};
+
+const FIELD_LABELS = {
+  nama: "Nama Lengkap",
+  gender: "Jenis Kelamin",
+  rt_rw_display: "RT/RW",
+  nohp: "No HP",
+  penyakit_warga: "Penyakit yang Didampingi",
+  created_at: "Waktu Input",
+};
+
+const FIELD_ORDER = ["nama", "gender", "rt_rw_display", "nohp", "penyakit_warga", "created_at"];
 
 const SaragaForm = () => {
+  // Hooks
   const { wargaList, loading, addWarga, updateWarga, deleteWarga } = useData();
   const { showToast } = useToast();
   const { askForConfirmation } = useConfirmation();
 
-  const initialFormState = { id: null, nama: "", rt: "", gender: "" };
-  const [formData, setFormData] = useState(initialFormState);
+  // State
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [editingId, setEditingId] = useState(null);
   const [view, setView] = useState("list");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [detailItem, setDetailItem] = useState(null);
-  const [selectedRW, setSelectedRW] = useState(""); // ✅ filter RW
+  const [selectedRW, setSelectedRW] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  // New state for RW data
+  const [rwList, setRwList] = useState([]);
+  const [rwLoading, setRwLoading] = useState(true);
 
-  const handleShowDetail = (item) => setDetailItem(item);
-  const handleCloseDetail = () => setDetailItem(null);
+  // Fetch RW data
+  const fetchRwData = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('rw')
+        .select('*')
+        .order('nomor_rw');
+      
+      if (error) throw error;
+      setRwList(data || []);
+    } catch (error) {
+      console.error('Error fetching RW data:', error);
+      showToast('Gagal memuat data RW');
+    } finally {
+      setRwLoading(false);
+    }
+  }, [showToast]);
 
-  const handleChange = (e) => {
+  // Load RW data on mount
+  useEffect(() => {
+    fetchRwData();
+  }, [fetchRwData]);
+
+  // Computed values
+  const uniqueRWs = useMemo(() => {
+    return rwList.map(rw => rw.nomor_rw);
+  }, [rwList]);
+
+  const filteredWarga = useMemo(() => {
+    let filtered = [...wargaList];
+
+    // Filter by search query (nama)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(item =>
+        item.nama?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by RW
+    if (selectedRW) {
+      filtered = filtered.filter(item =>
+        item.nomor_rw === selectedRW
+      );
+    }
+
+    // Sort by RW then RT
+    return filtered.sort((a, b) => {
+      const rwA = parseInt(a.nomor_rw || 0, 10);
+      const rwB = parseInt(b.nomor_rw || 0, 10);
+      if (rwA !== rwB) return rwA - rwB;
+      
+      const rtA = parseInt(a.rt || 0, 10);
+      const rtB = parseInt(b.rt || 0, 10);
+      return rtA - rtB;
+    });
+  }, [wargaList, selectedRW, searchQuery]);
+
+  const isEditing = editingId !== null;
+
+  // Event handlers
+  const handleShowDetail = useCallback((item) => setDetailItem(item), []);
+  const handleCloseDetail = useCallback(() => setDetailItem(null), []);
+
+  const handleSearchChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const handleChange = useCallback((e) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id.replace("saraga-", "")]: value }));
+    const fieldName = id.replace("saraga-", "");
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  }, []);
+
+  const handlePenyakitWargaChange = useCallback((index, event) => {
+    const { value } = event.target;
+    setFormData((prev) => {
+      const newPenyakitList = [...prev.penyakit_warga];
+      newPenyakitList[index] = value;
+      return { ...prev, penyakit_warga: newPenyakitList };
+    });
+  }, []);
+
+  const handleAddPenyakitWarga = useCallback(() => {
+    setFormData((prev) => ({
+      ...prev,
+      penyakit_warga: [...prev.penyakit_warga, ""],
+    }));
+  }, []);
+
+  const handleRemovePenyakitWarga = useCallback((index) => {
+    setFormData((prev) => ({
+      ...prev,
+      penyakit_warga: prev.penyakit_warga.filter((_, i) => i !== index),
+    }));
+  }, []);
+
+  const resetForm = useCallback(() => {
+    setFormData(INITIAL_FORM_STATE);
+    setEditingId(null);
+  }, []);
+
+  const handleAddNew = useCallback(() => {
+    resetForm();
+    setView("form");
+  }, [resetForm]);
+
+  const handleBackToList = useCallback(() => {
+    setView("list");
+    resetForm();
+  }, [resetForm]);
+
+  // API operations - Updated to use view for getting data with RW info
+  const saveData = async (dataToSubmit) => {
+    if (isEditing) {
+      return await supabase
+        .from("saraga")
+        .update(dataToSubmit)
+        .eq("id", editingId)
+        .select(`
+          *,
+          rw:rw_id (
+            id,
+            nomor_rw,
+            keterangan
+          )
+        `)
+        .single();
+    } else {
+      return await supabase
+        .from('v_saraga_detail')
+        .insert([dataToSubmit])
+        .select(`
+          *,
+          rw:rw_id (
+            id,
+            nomor_rw,
+            keterangan
+          )
+        `)
+        .single();
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const dataToSubmit = {
-      nama: formData.nama,
-      rt: formData.rt,
-      gender: formData.gender,
-    };
+    try {
+      const cleanedPenyakitWargaList = formData.penyakit_warga.filter(
+        (p) => p.trim() !== ""
+      );
 
-    let result;
-    if (editingId !== null) {
-      result = await supabase
-        .from("saraga")
-        .update(dataToSubmit)
-        .eq("id", editingId)
-        .select()
-        .single();
-    } else {
-      result = await supabase
-        .from("saraga")
-        .insert([dataToSubmit])
-        .select()
-        .single();
-    }
+      const dataToSubmit = {
+        nama: formData.nama.trim(),
+        rt: formData.rt.trim(),
+        rw_id: parseInt(formData.rw_id) || null,
+        gender: formData.gender,
+        nohp: formData.nohp.trim(),
+        penyakit_warga: cleanedPenyakitWargaList,
+      };
 
-    const { data: newOrUpdatedData, error } = result;
+      const { data: newOrUpdatedData, error } = await saveData(dataToSubmit);
 
-    if (error) {
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Transform data to include rt_rw_display
+      const transformedData = {
+        ...newOrUpdatedData,
+        nomor_rw: newOrUpdatedData.rw?.nomor_rw,
+        rt_rw_display: `RT ${newOrUpdatedData.rt} / RW ${newOrUpdatedData.rw?.nomor_rw}`,
+        rw_keterangan: newOrUpdatedData.rw?.keterangan,
+      };
+
+      const successMessage = isEditing ? "diperbarui" : "disimpan";
+      showToast(`Data berhasil ${successMessage}!`);
+
+      if (isEditing) {
+        updateWarga(transformedData);
+      } else {
+        addWarga(transformedData);
+      }
+
+      resetForm();
+      setView("list");
+    } catch (error) {
       console.error("Error saving data:", error);
       showToast("Gagal menyimpan data.");
-    } else {
-      showToast(`Data berhasil ${editingId ? "diperbarui" : "disimpan"}!`);
-      if (editingId) {
-        updateWarga(newOrUpdatedData);
-      } else {
-        addWarga(newOrUpdatedData);
-      }
-      setEditingId(null);
-      setFormData(initialFormState);
-      setView("list");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
-  const handleEdit = (item) => {
+  const handleEdit = useCallback((item) => {
     setFormData({
       id: item.id,
-      nama: item.nama,
-      rt: item.rt,
-      gender: item.gender,
+      nama: item.nama || "",
+      rt: item.rt || "",
+      rw_id: item.rw_id || "",
+      gender: item.gender || "",
+      nohp: item.nohp || "",
+      penyakit_warga:
+        item.penyakit_warga && item.penyakit_warga.length > 0
+          ? item.penyakit_warga
+          : [""],
     });
     setEditingId(item.id);
     setView("form");
-  };
+  }, []);
 
   const handleDelete = async (id) => {
-    const confirmed = await askForConfirmation({
-      title: "Hapus Cargiever",
-      message:
-        "Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.",
-    });
-    if (confirmed) {
+    try {
+      const confirmed = await askForConfirmation({
+        title: "Hapus Caregiver",
+        message:
+          "Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.",
+      });
+
+      if (!confirmed) return;
+
       const { error } = await supabase.from("saraga").delete().eq("id", id);
+
       if (error) {
-        console.error("Error deleting data:", error);
-        showToast("Gagal menghapus data.");
-      } else {
-        showToast("Data berhasil dihapus.");
-        deleteWarga(id);
+        throw new Error(error.message);
       }
+
+      showToast("Data berhasil dihapus.");
+      deleteWarga(id);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      showToast("Gagal menghapus data.");
     }
   };
 
-  const handleAddNew = () => {
-    setFormData(initialFormState);
-    setEditingId(null);
-    setView("form");
+  // Render methods
+  const renderFormField = (id, label, type = "text", options = {}) => {
+    const fieldId = `saraga-${id}`;
+    const value = formData[id] || "";
+
+    return (
+      <div key={id}>
+        <label htmlFor={fieldId} className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+        {type === "select" ? (
+          <select
+            id={fieldId}
+            value={value}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            {...options}
+          >
+            <option value="">Pilih {label}</option>
+            {options.options?.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input
+            type={type}
+            id={fieldId}
+            onChange={handleChange}
+            value={value}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            {...options}
+          />
+        )}
+      </div>
+    );
   };
 
-  // ✅ Ambil daftar RW unik dari data
-  const uniqueRWs = [
-    ...new Set(
-      wargaList.map((w) => (w.rt.includes("/") ? w.rt.split("/")[1] : ""))
-    ),
-  ].filter((rw) => rw !== "");
+  const renderPenyakitWargaFields = () => (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        Penyakit Warga yang Didampingi
+      </label>
+      {formData.penyakit_warga.map((penyakit, index) => (
+        <div key={index} className="flex items-center gap-2 mb-2">
+          <input
+            type="text"
+            placeholder={`Penyakit ${index + 1}`}
+            value={penyakit}
+            onChange={(e) => handlePenyakitWargaChange(index, e)}
+            className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+          {formData.penyakit_warga.length > 1 && (
+            <button
+              type="button"
+              onClick={() => handleRemovePenyakitWarga(index)}
+              className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200"
+              title="Hapus penyakit"
+            >
+              &minus;
+            </button>
+          )}
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={handleAddPenyakitWarga}
+        className="mt-2 text-sm bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition duration-200"
+      >
+        + Tambah Penyakit
+      </button>
+    </div>
+  );
 
-  // ✅ Sort dan filter data sebelum render
-  const filteredWarga = [...wargaList]
-    .sort((a, b) => {
-      const rwA = parseInt(a.rt.split("/")[1] || 0, 10);
-      const rwB = parseInt(b.rt.split("/")[1] || 0, 10);
-      return rwA - rwB;
-    })
-    .filter((item) =>
-      selectedRW ? item.rt.split("/")[1] === selectedRW : true
-    );
+  const renderTableRow = (item) => (
+    <tr key={item.id} className="border-b hover:bg-gray-50">
+      <td className="p-3 text-xs md:text-sm">{item.nama}</td>
+      <td className="p-3 text-xs md:text-sm">{item.rt_rw_display || `RT ${item.rt} / RW ${item.nomor_rw}`}</td>
+      <td className="p-3 text-xs md:text-sm">
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleShowDetail(item)}
+            className="text-white bg-blue-400 hover:bg-blue-500 py-1 px-2 md:py-1.5 md:px-3 rounded transition duration-200 text-xs md:text-sm"
+            title="Lihat Detail"
+          >
+            Detail
+          </button>
+          <button
+            onClick={() => handleEdit(item)}
+            className="text-blue-500 hover:text-blue-700 transition duration-200"
+            title="Edit"
+          >
+            <i className="fas fa-edit"></i>
+          </button>
+          <button
+            onClick={() => handleDelete(item.id)}
+            className="text-red-500 hover:text-red-700 transition duration-200"
+            title="Hapus"
+          >
+            <i className="fas fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
 
+  // Main render
   if (view === "list") {
     return (
       <div className="bg-white p-3 sm:p-8 rounded-lg shadow-md">
+        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-3">
-          <h2 className="md:text-2xl font-bold text-slate-800">Data Cargiever</h2>
-          <div className="flex gap-3">
-            {/* ✅ Dropdown filter RW */}
-            <select
-              value={selectedRW}
-              onChange={(e) => setSelectedRW(e.target.value)}
-              className="border rounded px-3 py-2 text-sm"
-            >
-              <option value="">Semua RW</option>
-              {uniqueRWs.map((rw) => (
-                <option key={rw} value={rw}>
-                  RW {rw}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={handleAddNew}
-              className="text-xs md:text-md bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200"
-            >
-              Tambah Data
-            </button>
-          </div>
+          <h2 className="md:text-2xl font-bold text-slate-800">Data Caregiver</h2>
+          <button
+            onClick={handleAddNew}
+            className="text-xs md:text-md bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200 self-end md:self-auto"
+          >
+            Tambah Data
+          </button>
         </div>
+
+        {/* Search and Filter */}
+        <div className="flex flex-col md:flex-row gap-3 mb-4">
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Cari berdasarkan nama..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+          <select
+            value={selectedRW}
+            onChange={(e) => setSelectedRW(e.target.value)}
+            className="border rounded px-3 py-2 min-w-[120px] focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            disabled={rwLoading}
+          >
+            <option value="">Semua RW</option>
+            {rwList.map((rw) => (
+              <option key={rw.id} value={rw.nomor_rw}>
+                RW {rw.nomor_rw}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Table */}
         <div className="overflow-x-auto">
           {loading.warga ? (
-            <p>Memuat data cargiever...</p>
+            <div className="flex justify-center py-8">
+              <p className="text-gray-500">Memuat data caregiver...</p>
+            </div>
+          ) : filteredWarga.length === 0 ? (
+            <div className="flex justify-center py-8">
+              <p className="text-gray-500">
+                {searchQuery ? `Tidak ada data yang cocok dengan "${searchQuery}"` : "Tidak ada data caregiver"}
+              </p>
+            </div>
           ) : (
             <table className="w-full min-w-max text-left">
               <thead className="bg-slate-100">
                 <tr>
                   <th className="p-3 text-xs md:text-sm font-semibold">Nama</th>
-                  <th className="p-3 text-xs md:text-sm font-semibold">
-                    RT/RW
-                  </th>
+                  <th className="p-3 text-xs md:text-sm font-semibold">RT/RW</th>
                   <th className="p-3 text-xs md:text-sm font-semibold">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredWarga.map((item) => (
-                  <tr key={item.id} className="border-b">
-                    <td className="p-3 text-xs md:text-sm">{item.nama}</td>
-                    <td className="p-3 text-xs md:text-sm">{item.rt}</td>
-                    <td className="p-3 text-xs md:text-sm flex gap-2">
-                      <button
-                        onClick={() => handleShowDetail(item)}
-                        className="text-white hover:text-sky-700 bg-blue-400 py-1 px-2 md:py-1.5 rounded hover:bg-blue-100 text-xs md:text-sm md:px-3"
-                        title="Lihat Detail"
-                      >
-                        Detail
-                      </button>
-                      <button
-                        onClick={() => handleEdit(item)}
-                        className="text-blue-500 hover:text-blue-700"
-                      >
-                        <i className="fas fa-edit"></i>
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <i className="fas fa-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {filteredWarga.map(renderTableRow)}
               </tbody>
             </table>
           )}
         </div>
+
+        {/* Search result info */}
+        {searchQuery && (
+          <div className="mt-3 text-sm text-gray-600">
+            Menampilkan {filteredWarga.length} hasil untuk "{searchQuery}"
+          </div>
+        )}
+
+        {/* Detail Modal */}
         <DetailModal
           isOpen={!!detailItem}
           onClose={handleCloseDetail}
-          title="Detail Cargiever"
+          title="Detail Caregiver"
           data={detailItem || {}}
-          fieldOrder={["nama", "gender", "rt", "yang_didampingi", "created_at"]}
-          fieldLabels={{
-            nama: "Nama Lengkap",
-            gender: "Jenis Kelamin",
-            rt: "RT/RW",
-            yang_didampingi: "Data Yang Didampingi",
-            created_at: "Waktu Input",
-          }}
+          fieldOrder={FIELD_ORDER}
+          fieldLabels={FIELD_LABELS}
         />
       </div>
     );
   }
 
+  // Form View
   return (
     <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md max-w-2xl mx-auto">
+      {/* Form Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="md:text-2xl font-bold text-slate-800">
-          {editingId ? "Edit Data Cargiever" : "Tambah Data Cargiever"}
+          {isEditing ? "Edit Data Caregiver" : "Tambah Data Caregiver"}
         </h2>
         <button
           type="button"
-          onClick={() => setView("list")}
+          onClick={handleBackToList}
           className="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300 transition duration-200"
         >
           Kembali
         </button>
       </div>
+
       <hr className="my-6" />
-      <form id="form-saraga" className="space-y-6" onSubmit={handleSubmit}>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {renderFormField("nama", "Nama Lengkap", "text", { required: true })}
+        
+        {renderFormField("gender", "Jenis Kelamin", "select", {
+          options: [
+            { value: "Laki-laki", label: "Laki-laki" },
+            { value: "Perempuan", label: "Perempuan" },
+          ],
+        })}
+        
+        {renderFormField("nohp", "No. HP", "tel", {
+          placeholder: "628xxxxxxxxxx",
+        })}
+        
+        {renderFormField("rt", "RT", "text", {
+          placeholder: "1",
+        })}
+
+        {/* RW Select */}
         <div>
-          <label
-            htmlFor="saraga-nama"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Nama Lengkap
-          </label>
-          <input
-            type="text"
-            id="saraga-nama"
-            onChange={handleChange}
-            value={formData.nama}
-            className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
-            required
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="saraga-gender"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Jenis Kelamin
+          <label htmlFor="saraga-rw_id" className="block text-sm font-medium text-gray-700">
+            RW
           </label>
           <select
-            id="saraga-gender"
-            value={formData.gender}
+            id="saraga-rw_id"
+            value={formData.rw_id}
             onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
-          >
-            <option value="">Pilih Jenis Kelamin</option>
-            <option value="Laki-laki">Laki-laki</option>
-            <option value="Perempuan">Perempuan</option>
-          </select>
-        </div>
-        <div>
-          <label
-            htmlFor="saraga-rt"
-            className="block text-sm font-medium text-gray-700"
-          >
-            RT/RW
-          </label>
-          <input
-            type="text"
-            id="saraga-rt"
-            placeholder="001/002"
-            onChange={handleChange}
-            value={formData.rt}
-            className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
-          />
-        </div>
-                <div>
-          <label
-            htmlFor="saraga-yang_didampingi"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Kasus Yang Didampingi
-          </label>
-          <input
-            type="text"
-            id="saraga-yang_didampingi"
-            onChange={handleChange}
-            value={formData.yang_didampingi}
-            className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm"
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            disabled={rwLoading}
             required
-          />
+          >
+            <option value="">Pilih RW</option>
+            {rwList.map((rw) => (
+              <option key={rw.id} value={rw.id}>
+                RW {rw.nomor_rw}
+              </option>
+            ))}
+          </select>
+          {rwLoading && (
+            <p className="text-sm text-gray-500 mt-1">Memuat data RW...</p>
+          )}
         </div>
+
+        {renderPenyakitWargaFields()}
+
+        {/* Submit Button */}
         <div className="flex justify-end pt-4">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition duration-200 disabled:bg-indigo-300"
+            className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300 transition duration-200"
           >
             {isSubmitting
               ? "Menyimpan..."
-              : editingId
+              : isEditing
               ? "Update Data"
               : "Simpan Data"}
           </button>

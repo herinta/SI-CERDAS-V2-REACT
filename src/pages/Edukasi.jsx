@@ -1,5 +1,6 @@
 import React from 'react';
 import Navigation from '../components/Navigation';
+import { Link } from 'react-router-dom';
 
 // Data contoh untuk artikel. Nantinya, ini bisa diganti dengan data dari API.
 const edukasiData = [
@@ -53,7 +54,7 @@ const edukasiData = [
   },
 ];
 
-const EdukasiCard = ({ imageUrl, category, title, summary, link }) => {
+const EdukasiCard = ({ imageUrl, category, title, summary, id }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
       <img className="w-full h-48 object-cover" src={imageUrl} alt={title} />
@@ -65,12 +66,12 @@ const EdukasiCard = ({ imageUrl, category, title, summary, link }) => {
         <p className="mt-2 text-gray-600">
           {summary}
         </p>
-        <a 
-          href={link} 
-          className="mt-4 inline-block text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-200"
+        <Link 
+          to={`/edukasi/${id}`}
+          className="mt-4 inline-block text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-200 self-start"
         >
           Baca Selengkapnya &rarr;
-        </a>
+        </Link>
       </div>
     </div>
   );
@@ -94,6 +95,7 @@ const Edukasi = () => {
           {edukasiData.map(article => (
             <EdukasiCard
               key={article.id}
+              id={article.id}
               imageUrl={article.imageUrl}
               category={article.category}
               title={article.title}
