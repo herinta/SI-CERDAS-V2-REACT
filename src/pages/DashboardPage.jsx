@@ -168,7 +168,7 @@ const DashboardPage = () => {
         </div>
         <div className="bg-white p-6 rounded-xl shadow-md flex items-center justify-between">
           <div>
-            <h4 className="text-slate-500 font-medium">Total Warga</h4>
+            <h4 className="text-slate-500 font-medium">Total Cargiever</h4>
             <p className="text-3xl font-bold text-slate-800 mt-1">{wargaList.length}</p>
           </div>
           <div className="bg-purple-100 text-purple-600 p-4 rounded-full">

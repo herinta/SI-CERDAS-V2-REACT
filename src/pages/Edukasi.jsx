@@ -87,7 +87,7 @@ const Edukasi = () => {
       <div className="container mx-auto px-4 md:py-28 py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800">Materi & Informasi Kesehatan</h1>
-          <p className="mt-2 text-lg text-gray-600">Kumpulan informasi terkini seputar kesehatan keluarga dari Posyandu.</p>
+          <p className="mt-2 text-lg text-gray-600">Kumpulan Materi Seputar Kegiatan PPK ORMAWA HIMAPERSA di Desa Plamongansari.</p>
         </div>
 
         {/* Grid untuk menampilkan kartu-kartu artikel */}
