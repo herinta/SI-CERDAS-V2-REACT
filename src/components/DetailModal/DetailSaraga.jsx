@@ -1,4 +1,4 @@
-const DetailModal = ({ isOpen, onClose, title, data }) => {
+const DetailSaraga = ({ isOpen, onClose, title, data }) => {
     if (!isOpen) return null;
 
     return (
@@ -73,4 +73,4 @@ const DetailModal = ({ isOpen, onClose, title, data }) => {
     );
 };
 
-export default DetailModal;
+export default DetailSaraga;

@@ -3,7 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useData } from "../contexts/DataContext";
 import { useToast } from "../contexts/ToastContext";
 import { useConfirmation } from "../contexts/ConfirmationContext";
-import DetailModal from "../components/DetailModal";
+import DetailSaraga from "../components/DetailModal/DetailSaraga";
 import { Search } from "lucide-react";
 
 // REVISI: State awal dan konstanta disesuaikan
@@ -221,7 +221,7 @@ const SaragaForm = () => {
           )}
         </div>
         {searchQuery && (<div className="mt-3 text-sm text-gray-600">Menampilkan {filteredWarga.length} hasil</div>)}
-        <DetailModal isOpen={!!detailItem} onClose={handleCloseDetail} title="Detail Caregiver" data={detailItem || {}} />
+        <DetailSaraga isOpen={!!detailItem} onClose={handleCloseDetail} title="Detail Caregiver" data={detailItem || {}} />
       </div>
     );
   }
