@@ -4,7 +4,7 @@ import { useData } from "../contexts/DataContext";
 import { callGemini } from "../api/gemini";
 import { useToast } from "../contexts/ToastContext";
 import { useConfirmation } from "../contexts/ConfirmationContext";
-import DetailModal from "../components/DetailModal";
+import DetailModal from "../components/DetailModal/DetailSaraga";
 
 const Modal = ({ title, content, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">

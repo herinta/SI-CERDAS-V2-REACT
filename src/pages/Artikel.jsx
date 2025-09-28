@@ -1,12 +1,10 @@
 import React from 'react';
 import Navigation from '../components/Navigation';
 
-// Data contoh untuk artikel. Nantinya, ini bisa diganti dengan data dari API.
 const articleData = [
-  // --- Artikel dari Landing Page ---
   {
     id: 1,
-    imageUrl: 'images/grand.jpeg', // Pastikan path ini benar
+    imageUrl: 'images/grand.jpeg', 
     category: 'Info Program',
     title: 'Grand Launching PPK Ormawa Himapersa',
     summary: 'Program PPK Ormawa HIMAPERSA 2025 dengan tajuk Mawas Warga Plus & SARAGA (Satu Rumah Satu Caregiver) resmi diluncurkan di Balai Kelurahan Plamongansari...',
@@ -14,7 +12,7 @@ const articleData = [
   },
   {
     id: 2,
-    imageUrl: 'images/sentuh.JPG', // Pastikan path ini benar
+    imageUrl: 'images/sentuh.JPG', 
     category: 'Workshop Kader',
     title: 'Workshop Sentuh untuk Calon Kader Caregiver',
     summary: 'Dalam rangka mendukung program "Satu Rumah Satu Caregiver" (SARAGA), tim PPK Ormawa Himapersa menggelar "Workshop Sentuh" untuk membekali masyarakat dengan keterampilan terapi holistik.',
@@ -22,7 +20,7 @@ const articleData = [
   },
   {
     id: 3,
-    imageUrl: 'images/remaja.jpg', // Pastikan path ini benar
+    imageUrl: 'images/remaja.jpg', 
     category: 'Kesehatan Remaja',
     title: 'Kelas Remaja: Edukasi, Gizi, dan Pencegahan Anemia',
     summary: 'Program Kelas Remaja memberikan edukasi gizi seimbang, pencegahan anemia, serta pemeriksaan kesehatan gratis yang meliputi cek Hb dan pengukuran antropometri.',
@@ -30,12 +28,28 @@ const articleData = [
   },
   {
     id: 4,
-    imageUrl: 'images/sigap.png', // Pastikan path ini benar
+    imageUrl: 'images/sigap.png', 
     category: 'Kesehatan Remaja',
     title: 'SIGAP : Siap Tanggap Pertolongan Pertama',
     summary: 'Pelatihan Siap Tanggap Pertolongan Pertama (SIGAP), untuk Meningkatkan Kapasitas kader dalam Menghadapi Kondisi Kegawatdaruratan.',
     link: 'https://www.netralnews.com/tim-ppk-ormawa-himapersa-unimus-gelar-pelatihan-siap-tanggap-pertolongan-pertama/TlFHWlg4TWh6cE1TQjJ1OFRSb0Z2QT09',
   },
+  {
+    id: 5,
+    imageUrl: 'images/sigap.png', 
+    category: 'Kesehatan Remaja',
+    title: 'FGD Bersama Karang Taruna',
+    summary: 'Pelatihan Siap Tanggap Pertolongan Pertama (SIGAP), untuk Meningkatkan Kapasitas kader dalam Menghadapi Kondisi Kegawatdaruratan.',
+    link: 'https://www.netralnews.com/tim-ppk-ormawa-himapersa-gelar-fgd-bersama-karang-taruna-kelurahan-plamongansari/alh2WnhvUWN0WkpGRkRGZDltS3pVQT09'
+  },
+  {
+    id: 6,
+    imageUrl: 'images/sigap.png', 
+    category: 'Kesehatan Remaja',
+    title: 'Perkuat Program Kerja, Tim PPK ORMAWA HIMAPERSA Gelar Monev Internal Perguruan Tinggi',
+    summary: 'Pelatihan Siap Tanggap Pertolongan Pertama (SIGAP), untuk Meningkatkan Kapasitas kader dalam Menghadapi Kondisi Kegawatdaruratan.',
+    link: 'https://www.netralnews.com/perkuat-program-kerja-tim-ppk-ormawa-himapersa-gelar-monev-internal-perguruan-tinggi/TWwwWGNtem9xdXMxQVlUUFhHeTRiQT09'
+  }
 ];
 
 const ArticleCard = ({ imageUrl, category, title, summary, link }) => {
@@ -68,14 +82,14 @@ const Artikel = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navigation />
-      <div className="container mx-auto px-4 md:py-28 py-16">
+      <div className="container px-28 px-4 md:py-28 py-16 px-32">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800">Kegiatan dan Program Kerja</h1>
           <p className="mt-2 text-lg text-gray-600">Kumpulan Informasi Seputar Kegiatan PPK ORMAWA HIMAPERSA di Desa Plamongansari.</p>
         </div>
 
         {/* Grid untuk menampilkan kartu-kartu artikel */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {articleData.map(article => (
             <ArticleCard
               key={article.id}

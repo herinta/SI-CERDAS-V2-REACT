@@ -12,7 +12,7 @@ const Register = ({ onRegister, onToggleForm }) => {
   return (
     <div className="w-full p-8 md:p-12">
       <div id="register-form-container" className="relative">
-        <div id="register-form" className="transition-all duration-500">
+        <div id="register-form" classN  ame="transition-all duration-500">
           <h2 className="mb-3 text-3xl font-bold text-gray-800">Daftar Akun Baru</h2>
           <p className="mb-8 text-sm text-gray-600">Buat akun untuk mulai menggunakan SiCerdas.</p>
           <form onSubmit={handleSubmit}>

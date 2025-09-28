@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient";
 import { useData } from "../contexts/DataContext";
 import { useConfirmation } from "../contexts/ConfirmationContext";
 import { useToast } from "../contexts/ToastContext";
-import DetailModal from "../components/DetailModal";
+import DetailModal from "../components/DetailModal/DetailSaraga";
 
 const Modal = ({ title, content, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
@@ -114,10 +114,9 @@ const SiGitaForm = () => {
       food_pic_url: imageUrl,
     };
 
-    // --- PERBAIKAN DI SINI ---
     let result;
     if (editingId !== null) {
-      // Tambahkan .select().single()
+     
       result = await supabase
         .from("sigita")
         .update(dataToSubmit)
@@ -125,7 +124,7 @@ const SiGitaForm = () => {
         .select()
         .single();
     } else {
-      // Tambahkan .select().single()
+      
       result = await supabase
         .from("sigita")
         .insert([dataToSubmit])

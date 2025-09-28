@@ -14,7 +14,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import Navigation from "../components/Navigation";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const features = [
   {
@@ -393,9 +393,9 @@ const LandingPage = () => {
     </motion.div>
 
     <div className="flex justify-center md:mt-28 mt-6">
-      <button className="bg-green-600 text-white px-8 py-3 rounded-full font-semibold shadow hover:bg-green-700 transition duration-200 text-lg">
+      <Link to={"/artikel"} className="bg-green-600 text-white px-8 py-3 rounded-full font-semibold shadow hover:bg-green-700 transition duration-200 text-lg">
         Lihat Lainnya
-      </button>
+      </Link>
     </div>
   </div>
 </section>

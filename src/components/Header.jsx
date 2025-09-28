@@ -80,6 +80,15 @@ const Header = ({ pageTitle, toggleSidebar, handleLogout }) => {
                   <LogOut className="w-4 h-4 mr-3" />
                   Logout
                 </button>
+                 <hr className="my-1 border-gray-200" />
+                 <Link
+                  to="/"
+                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <User className="w-4 h-4 mr-3 text-gray-400" />
+                  Home
+                </Link>
               </div>
             )}
 

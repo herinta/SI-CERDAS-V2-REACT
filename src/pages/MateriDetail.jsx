@@ -2,9 +2,6 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 // import Navigation from '../components/Navigation'; // Pastikan path ini benar
 
-// --- DATABASE ARTIKEL ---
-// Di aplikasi nyata, ini biasanya diambil dari API.
-// Ganti URL placeholder dengan URL file Google Drive Anda yang sudah diubah.
 const allArticles = {
   '1': {
     title: 'Pentingnya Gizi Seimbang untuk Tumbuh Kembang Optimal',
