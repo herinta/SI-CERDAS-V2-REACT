@@ -4,10 +4,10 @@ import { useParams, Link } from 'react-router-dom';
 
 const allArticles = {
   '1': {
-    title: 'Pentingnya Gizi Seimbang untuk Tumbuh Kembang Optimal',
-    summary: 'Dokumen ini menjelaskan secara rinci mengenai pentingnya asupan gizi seimbang bagi anak-anak dalam masa pertumbuhan.',
+    title: 'Pentingnya Pemahaman Penanganan Kejang pada Anak',
+    summary: 'Dokumen ini menjelaskan secara rinci mengenai pentingnya pemahaman langkah-langkah penanganan kejang pada anak.',
     fileType: 'pdf',
-    fileUrl: 'https://drive.google.com/file/d/1BixQ_A2f3f_wA8bCg5d6e7f8g9h0i1j/preview', // GANTI DENGAN URL EMBED PDF ANDA
+    fileUrl: 'https://docs.google.com/presentation/d/1RgAcS1qQ-7XFWKuTYCO9GTHnDiz112sO/preview', // GANTI DENGAN URL EMBED PDF ANDA
   },
   '2': {
     title: 'Presentasi Pencegahan Anemia pada Remaja',
