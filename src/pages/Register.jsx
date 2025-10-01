@@ -3,9 +3,6 @@ import React from 'react';
 const Register = ({ onRegister, onToggleForm }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    // In a real app, you'd get name, email, password from form fields
-    // and send to backend for registration.
-    // For now, just call onRegister to simulate success.
     onRegister();
   };
 

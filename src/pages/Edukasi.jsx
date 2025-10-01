@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const edukasiData = [
   {
     id: 1,
-    imageUrl: 'https://as2.ftcdn.net/v2/jpg/16/13/94/71/1000_F_1613947127_boGl27sWuxIrWBWOzBu5LrDSfBzaoJLN.jpg',
+    imageUrl: '/public/images/cover1.png',
     category: 'Penanganan Kejang pada Anak',
     title: 'Pentingnya Pemahaman Penanganan Kejang pada Anak',
     summary: 'Kejang pada anak sering kali menyebabkan kita panik. Mitos penanganan kejang yang berkembang salah satunya adalah memasukkan sendok kemulut anak yang mana justru itu berbahaya. Daokumen ini membahas...',
