@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Menu, X, LogIn } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const MotionLink = motion(Link);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -96,21 +98,21 @@ const Navigation = () => {
             ))}
             
             {/* Login Button */}
-            <motion.a
-              href="/login"
-              className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 10px 25px rgba(59, 130, 246, 0.3)"
-              }}
-              whileTap={{ scale: 0.95 }}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <LogIn className="w-4 h-4" />
-              <span>Login</span>
-            </motion.a>
+           <MotionLink
+      to="/dashboard" // <-- GUNAKAN 'to' BUKAN 'href'
+      className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+      whileHover={{ 
+        scale: 1.05,
+        boxShadow: "0 10px 25px rgba(59, 130, 246, 0.3)"
+      }}
+      whileTap={{ scale: 0.95 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.6 }}
+    >
+      <LogIn className="w-4 h-4" />
+      <span>Masuk</span>
+    </MotionLink>
           </div>
 
           {/* Mobile Menu Button */}

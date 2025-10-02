@@ -190,7 +190,7 @@ const LandingPage = () => {
                   boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
                 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/dashboard")}
               >
                 <span className="flex items-center gap-3">
                   <Heart className="w-6 h-6" />
