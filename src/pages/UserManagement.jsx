@@ -244,6 +244,7 @@ const UserManagement = () => {
           <table className="w-full text-left">
             <thead className="bg-slate-100">
               <tr>
+                <th className="p-3">No</th>
                 <th className="p-3">Nama Lengkap</th>
                 <th className="p-3">Email</th>
                 <th className="p-3">Peran (Role)</th>
@@ -251,8 +252,9 @@ const UserManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {users.map((user, idx) => (
                 <tr key={user.id} className="border-b">
+                  <td className="p-3">{idx + 1}</td>
                   <td className="p-3">{user.full_name || "-"}</td>
                   <td className="p-3">{user.email || "-"}</td>
                   <td className="p-3">{user.role || "-"}</td>

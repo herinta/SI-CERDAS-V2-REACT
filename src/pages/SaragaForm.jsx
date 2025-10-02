@@ -151,8 +151,8 @@ const SaragaForm = () => {
   };
 
   // REVISI: Disesuaikan untuk mengirim struktur data baru
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (data) => {
+    data.preventDefault();
     setIsSubmitting(true);
     try {
       const cleanedKeluargaDidampingi = formData.keluarga_didampingi.filter(
@@ -264,8 +264,9 @@ const SaragaForm = () => {
     );
   };
 
-  const renderTableRow = (item) => (
+  const renderTableRow = (item, index) => (
     <tr key={item.id} className="border-b hover:bg-gray-50">
+      <td className="p-3 text-xs md:text-sm">{index + 1}</td>
       <td className="p-3 text-xs md:text-sm">{item.nama}</td>
       <td className="p-3 text-xs md:text-sm">{item.rt_rw_display}</td>
       <td className="p-3 text-xs md:text-sm">
@@ -349,6 +350,7 @@ const SaragaForm = () => {
             <table className="w-full min-w-max text-left">
               <thead className="bg-slate-100">
                 <tr>
+                  <th className="p-3 text-xs md:text-sm font-semibold">No</th>
                   <th className="p-3 text-xs md:text-sm font-semibold">Nama</th>
                   <th className="p-3 text-xs md:text-sm font-semibold">
                     RT/RW
@@ -356,7 +358,9 @@ const SaragaForm = () => {
                   <th className="p-3 text-xs md:text-sm font-semibold">Aksi</th>
                 </tr>
               </thead>
-              <tbody>{filteredWarga.map(renderTableRow)}</tbody>
+              <tbody>
+                {filteredWarga.map((item, idx) => renderTableRow(item, idx))}
+              </tbody>
             </table>
           )}
         </div>

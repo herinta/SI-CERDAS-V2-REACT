@@ -82,14 +82,14 @@ const Artikel = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navigation />
-      <div className="container px-28 px-4 md:py-28 py-16 ">
+      <div className="container px-28 mx-auto px-4 md:py-28 py-16 w-full flex flex-col items-center justify-center">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800">Kegiatan dan Program Kerja</h1>
           <p className="mt-2 text-lg text-gray-600">Kumpulan Informasi Seputar Kegiatan PPK ORMAWA HIMAPERSA di Desa Plamongansari.</p>
         </div>
 
         {/* Grid untuk menampilkan kartu-kartu artikel */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:px-28">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto">
           {articleData.map(article => (
             <ArticleCard
               key={article.id}
