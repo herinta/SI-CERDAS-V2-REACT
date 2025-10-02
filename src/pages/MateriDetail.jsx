@@ -1,25 +1,25 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-// import Navigation from '../components/Navigation'; // Pastikan path ini benar
+import Navigation from '../components/Navigation';
 
 const allArticles = {
   '1': {
     title: 'Pentingnya Pemahaman Penanganan Kejang pada Anak',
     summary: 'Dokumen ini menjelaskan secara rinci mengenai pentingnya pemahaman langkah-langkah penanganan kejang pada anak.',
-    fileType: 'pdf',
+    fileType: 'ppt',
     fileUrl: 'https://docs.google.com/presentation/d/1RgAcS1qQ-7XFWKuTYCO9GTHnDiz112sO/preview', // GANTI DENGAN URL EMBED PDF ANDA
   },
   '2': {
     title: 'Presentasi Pencegahan Anemia pada Remaja',
-    summary: 'Materi presentasi ini membahas tentang gejala, penyebab, dan cara mencegah anemia pada remaja putri.',
+    summary: 'Fondasi Akupresur: Mengenal Aliran Energi (Qi) untuk Kesehatan Holistik.',
     fileType: 'ppt',
-    fileUrl: 'https://docs.google.com/presentation/d/e/2PACX-1vSy_gA_2j-4l8K_x_yZ.../embed?start=false&loop=false&delayms=3000', // GANTI DENGAN URL EMBED PPT ANDA
+    fileUrl: 'https://docs.google.com/presentation/d/1YbrrxCQdws3vNcwkTRJ-uu07LUZvLh11/preview', // GANTI DENGAN URL EMBED PPT ANDA
   },
   '3': {
     title: 'Tips Menjaga Kebugaran dan Kesehatan di Usia Senja',
     summary: 'Dokumen ini berisi tips-tips praktis untuk menjaga kesehatan fisik dan mental para lansia agar tetap bugar.',
     fileType: 'pdf',
-    fileUrl: 'https://drive.google.com/file/d/ANOTHER_PDF_FILE_ID/preview', // GANTI DENGAN URL EMBED PDF ANDA
+    fileUrl: 'https://docs.google.com/presentation/d/1U0XVhFCKlQ0Go0up7q5MDlGiQOMIDGoG/preview', // GANTI DENGAN URL EMBED PDF ANDA
   }
 };
 
@@ -75,7 +75,7 @@ const MateriDetail = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* <Navigation /> */}
+      <Navigation /> 
       <div className="container mx-auto px-4 py-16 md:py-24">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-800">{articleData.title}</h1>
