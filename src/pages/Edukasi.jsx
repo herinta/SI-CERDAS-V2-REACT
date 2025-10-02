@@ -27,7 +27,8 @@ const edukasiData = [
     title: 'Energy Based Therapy Pijat Refleksi Kaki',
     summary: 'Tetap aktif dan sehat di usia lanjut bukanlah hal yang mustahil. Temukan tips praktis untuk menjaga kesehatan fisik dan mental para lansia.',
     link: 'https://docs.google.com/presentation/d/1U0XVhFCKlQ0Go0up7q5MDlGiQOMIDGoG/preview',
-  }
+  
+  },
 ];
 
 const EdukasiCard = ({ imageUrl, category, title, summary, id }) => {
