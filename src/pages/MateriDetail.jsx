@@ -20,7 +20,25 @@ const allArticles = {
     summary: 'Dokumen ini berisi tips-tips praktis untuk menjaga kesehatan fisik dan mental para lansia agar tetap bugar.',
     fileType: 'pdf',
     fileUrl: 'https://docs.google.com/presentation/d/1U0XVhFCKlQ0Go0up7q5MDlGiQOMIDGoG/preview', // GANTI DENGAN URL EMBED PDF ANDA
-  }
+  },
+  '4': {
+    title: 'Panduan Pertolongan Pertama untuk Keracunan, Gigitan Hewan, dan Perdarahan',
+    summary: 'Dokumen ini membahas jenis racun, tanda keracunan, serta langkah-langkah pertolongan pertama untuk keracunan, gigitan hewan (termasuk rabies), dan berbagai jenis perdarahan.',
+    fileType: 'pdf',
+    fileUrl: 'https://drive.google.com/file/d/1gTv3zUNPi8wtjLQ9TFjLheH_gMogJbAi/preview', // GANTI DENGAN URL EMBED PDF ANDA
+  },
+  '5': {
+    title: 'Optimalisasi Peran Keluarga sebagai Upaya Pencegahan Stunting pada Anak',
+    summary: 'Dokumen ini menjelaskan definisi, penyebab, dan langkah-langkah pencegahan stunting dengan fokus pada 1000 Hari Pertama Kehidupan, serta tiga komponen utama penanggulangan stunting.',
+    fileType: 'pdf',
+    fileUrl: 'https://drive.google.com/file/d/1sT_ko0DcMFONI-nWgkrlyMHuXV4Z-0Gy/preview', // GANTI DENGAN URL EMBED PDF ANDA
+  },
+  '6': {
+    title: 'Panduan Pengukuran Antropometri untuk Penilaian Pertumbuhan Anak',
+    summary: 'File ini berisi definisi antropometri, parameter standar, peralatan, dan prosedur pengukuran berat badan, panjang/tinggi badan, lingkar kepala, lingkar dada, serta lingkar lengan atas pada anak.',
+    fileType: 'pdf',
+    fileUrl: 'https://drive.google.com/file/d/1o8jcuEXcynG84ZcVqLR_s3iCb01POrnB/preview', // GANTI DENGAN URL EMBED PDF ANDA
+  },
 };
 
 

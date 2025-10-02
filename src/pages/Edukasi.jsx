@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const edukasiData = [
   {
     id: 1,
-    imageUrl: '/public/images/cover1.png',
+    imageUrl: '/images/cover1.png',
     category: 'Penanganan Kejang pada Anak',
     title: 'Pentingnya Pemahaman Penanganan Kejang pada Anak',
     summary: 'Kejang pada anak sering kali menyebabkan kita panik. Mitos penanganan kejang yang berkembang salah satunya adalah memasukkan sendok kemulut anak yang mana justru itu berbahaya. Daokumen ini membahas...',
@@ -27,8 +27,29 @@ const edukasiData = [
     title: 'Energy Based Therapy Pijat Refleksi Kaki',
     summary: 'Tetap aktif dan sehat di usia lanjut bukanlah hal yang mustahil. Temukan tips praktis untuk menjaga kesehatan fisik dan mental para lansia.',
     link: 'https://docs.google.com/presentation/d/1U0XVhFCKlQ0Go0up7q5MDlGiQOMIDGoG/preview',
-  
   },
+  {
+    id: 4,
+    imageUrl: '/images/keracunan.png',
+    category: 'Kesehatan Remaja',
+    title: 'Panduan Pertolongan Pertama untuk Keracunan, Gigitan Hewan, dan Perdarahan',
+    summary: 'Keracunan merupakan kondisi yang bisa berbahaya. Karna tanpa disadari, hal-hal di sekiar kita bisa memicu keracunan. Lalu perdarahan harus diatasi sesuai kondisi perdarahan yang terjadi. Dokumen ini membahas jenis racun, tanda keracunan, serta langkah-langkah pertolongan pertama untuk keracunan, gigitan hewan (termasuk rabies), dan berbagai jenis perdarahan.',
+    link: 'https://drive.google.com/file/d/1gTv3zUNPi8wtjLQ9TFjLheH_gMogJbAi/preview',
+  },
+  { id: 5,
+    imageUrl: '/images/stunting.png',
+    category: 'Kesehatan Anak',
+    title: 'Optimalisasi Peran Keluarga sebagai Upaya Pencegahan Stunting pada Anak',
+    summary: 'Tumbuh kembang sikecil merupakan aset dimasa depannya. Maka penting bagi orang tua mengidentifikasi faktor apa saja yang mengganggu tumbuh kembang si kecil sejak dini. Termasuk stunting. Oleh karena itu penting untuk mengetahui pencegahannya. Dokumen ini menjelaskan definisi, penyebab, dan langkah-langkah pencegahan stunting dengan fokus pada 1000 Hari Pertama Kehidupan, serta tiga komponen utama penanggulangan stunting.',
+    link: 'https://drive.google.com/file/d/1sT_ko0DcMFONI-nWgkrlyMHuXV4Z-0Gy/preview',
+  },
+  { id: 6,
+    imageUrl: '/images/antropometri.png',
+    category: 'Kesehatan Anak',
+    title: 'Panduan Pengukuran Antropometri untuk Penilaian Pertumbuhan Anak',
+    summary: 'Antropometri adalah suatu metode yang digunakan untuk menilai ukuran, proporsi dan komposisi tubuh. File ini berisi definisi antropometri, parameter standar, peralatan, dan prosedur pengukuran berat badan, panjang/tinggi badan, lingkar kepala, lingkar dada, serta lingkar lengan atas pada anak.',
+    link: 'https://drive.google.com/file/d/1o8jcuEXcynG84ZcVqLR_s3iCb01POrnB/preview',
+  }
 ];
 
 const EdukasiCard = ({ imageUrl, category, title, summary, id }) => {
