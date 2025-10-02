@@ -27,19 +27,7 @@ const edukasiData = [
     title: 'Energy Based Therapy Pijat Refleksi Kaki',
     summary: 'Tetap aktif dan sehat di usia lanjut bukanlah hal yang mustahil. Temukan tips praktis untuk menjaga kesehatan fisik dan mental para lansia.',
     link: 'https://docs.google.com/presentation/d/1U0XVhFCKlQ0Go0up7q5MDlGiQOMIDGoG/preview',
-
-    id: 5,
-    imageUrl: 'https://placehold.co/600x400/9b59b6/ffffff?text=Pola+Hidup+Sehat',
-    category: 'Pola Hidup Sehat',
-    title: 'Langkah Awal Memulai Pola Hidup Sehat untuk Keluarga',
-    summary: 'Mengubah kebiasaan menjadi lebih sehat lebih mudah jika dilakukan bersama keluarga. Mulai dari langkah-langkah kecil yang berdampak besar.',
-    link: '#',
-    id: 6,
-    imageUrl: 'https://placehold.co/600x400/1abc9c/ffffff?text=Info+Posyandu',
-    category: 'Info Posyandu',
-    title: 'Apa Saja Layanan yang Tersedia di Posyandu?',
-    summary: 'Posyandu tidak hanya untuk menimbang balita. Kenali berbagai layanan kesehatan penting lainnya yang bisa Anda dapatkan di Posyandu terdekat.',
-    link: '#',
+  
   },
 ];
 
