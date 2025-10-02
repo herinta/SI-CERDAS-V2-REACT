@@ -33,7 +33,7 @@ const edukasiData = [
     category: 'Pola Hidup Sehat',
     title: 'Langkah Awal Memulai Pola Hidup Sehat untuk Keluarga',
     summary: 'Mengubah kebiasaan menjadi lebih sehat lebih mudah jika dilakukan bersama keluarga. Mulai dari langkah-langkah kecil yang berdampak besar.',
-    link: '#
+    link: '#',
     id: 6,
     imageUrl: 'https://placehold.co/600x400/1abc9c/ffffff?text=Info+Posyandu',
     category: 'Info Posyandu',
