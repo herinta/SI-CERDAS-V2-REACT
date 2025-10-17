@@ -82,7 +82,7 @@ const Artikel = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navigation />
-      <div className="container px-28 mx-auto px-4 md:py-28 py-16 w-full flex flex-col items-center justify-center">
+      <div className="container px-28 mxswa-auto px-4 md:py-28 py-16 w-full flex flex-col items-center justify-center">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800">Kegiatan dan Program Kerja</h1>
           <p className="mt-2 text-lg text-gray-600">Kumpulan Informasi Seputar Kegiatan PPK ORMAWA HIMAPERSA di Desa Plamongansari.</p>
